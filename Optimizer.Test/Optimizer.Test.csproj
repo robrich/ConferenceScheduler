@@ -48,6 +48,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ConferenceScheduler\ConferenceScheduler.csproj">
+      <Project>{fc1b17fd-6629-4da6-b9ba-e5684d6c056e}</Project>
+      <Name>ConferenceScheduler</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Optimizer\Optimizer.csproj">
       <Project>{f131fa05-4d35-4bb0-b70a-453e2cf0df50}</Project>
       <Name>Optimizer</Name>
