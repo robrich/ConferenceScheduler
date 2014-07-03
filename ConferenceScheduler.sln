@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Optimizer", "Optimizer\Optimizer.csproj", "{F131FA05-4D35-4BB0-B70A-453E2CF0DF50}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Optimizer.Test", "Optimizer.Test\Optimizer.Test.csproj", "{5B417301-9550-4A14-8772-8A7012D74EF9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1F28D20E-9C03-4238-B6CE-A71CBFD2538F}"
+	ProjectSection(SolutionItems) = preProject
+		BSSAllRules.ruleset = BSSAllRules.ruleset
+		BSSEFRules.ruleset = BSSEFRules.ruleset
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F131FA05-4D35-4BB0-B70A-453E2CF0DF50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F131FA05-4D35-4BB0-B70A-453E2CF0DF50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F131FA05-4D35-4BB0-B70A-453E2CF0DF50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F131FA05-4D35-4BB0-B70A-453E2CF0DF50}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B417301-9550-4A14-8772-8A7012D74EF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B417301-9550-4A14-8772-8A7012D74EF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B417301-9550-4A14-8772-8A7012D74EF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B417301-9550-4A14-8772-8A7012D74EF9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
