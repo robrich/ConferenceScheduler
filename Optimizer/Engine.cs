@@ -25,6 +25,9 @@ namespace ConferenceScheduler.Optimizer
             var result = new List<Assignment>();
             if (sessions != null && rooms != null && timeslots != null)
             {
+                if (sessions.Count() > (rooms.Count() * timeslots.Count()))
+                    throw new Exceptions.NoFeasibleSolutionsException();
+
                 //TODO: Add value 
             }
             return result;
