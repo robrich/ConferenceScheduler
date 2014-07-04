@@ -19,7 +19,7 @@ namespace ConferenceScheduler.Optimizer
         /// <param name="timeslots">A list of time slots during which sessions can be delivered.</param>
         /// <param name="settings">A dictionary of configuration settings for the process.</param>
         /// <returns>A collection of assignments representing the room and Timeslot in which each session will be delivered.</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "settings")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "session"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "room"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "timeslot"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "settings")]
         public IEnumerable<Assignment> Process(IEnumerable<Session> sessions, IEnumerable<Room> rooms, IEnumerable<Timeslot> timeslots, IDictionary<string, string> settings)
         {
             var result = new List<Assignment>();
@@ -40,6 +40,16 @@ namespace ConferenceScheduler.Optimizer
                 if (!matrix.IsFeasible)
                     throw new Exceptions.NoFeasibleSolutionsException();
 
+                foreach (var session in sessions)
+                {
+                    foreach (var room in rooms)
+                    {
+                        foreach (var timeslot in timeslots)
+                        {
+                            result.Add(new Assignment() { });
+                        }
+                    }
+                }
 
                 //TODO: Add value 
             }
