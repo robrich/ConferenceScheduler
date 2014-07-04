@@ -14,11 +14,11 @@ namespace ConferenceScheduler.Entities
         /// <summary>
         /// The primary-key identifier of the object
         /// </summary>
-        public int Id { get; set; }
+        public Int16 Id { get; set; }
 
         /// <summary>
         /// The list of timeslot Ids during which the person cannot present
         /// </summary>
-        public IEnumerable<int> UnavailableForTimeslots { get; set; }
+        public IEnumerable<Int16> UnavailableForTimeslots { get; set; }
     }
 }

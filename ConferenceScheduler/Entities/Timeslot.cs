@@ -14,6 +14,6 @@ namespace ConferenceScheduler.Entities
         /// <summary>
         /// The primary-key identifier of the object
         /// </summary>
-        public int Id { get; set; }
+        public Int16 Id { get; set; }
     }
 }

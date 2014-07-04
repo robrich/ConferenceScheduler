@@ -80,7 +80,7 @@ namespace ConferenceScheduler.Optimizer.Test
                             new Presenter() 
                                 { 
                                     Id = 1,  
-                                    UnavailableForTimeslots = new List<int>() { 1 }
+                                    UnavailableForTimeslots = new List<Int16>() { 1 }
                                 } 
                         } 
                 };
