@@ -15,5 +15,10 @@ namespace ConferenceScheduler.Entities
         /// The primary-key identifier of the object
         /// </summary>
         public int Id { get; set; }
+
+        /// <summary>
+        /// The number of people that the room can comfortably and safely hold
+        /// </summary>
+        public int Capacity { get; set; }
     }
 }
