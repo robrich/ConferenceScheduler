@@ -17,7 +17,6 @@ namespace ConferenceScheduler.Optimizer
             Load(presenters, timeslotIds);
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         public bool IsFeasible
         {
             get { return GetFeasibility(); }
@@ -33,7 +32,7 @@ namespace ConferenceScheduler.Optimizer
                 foreach (var timeslotId in timeslotIds)
                 {
                     _timeslotIds.Add(timeslotId);
-                    var available = !(presenter.UnavailableForTimeslots.Contains(timeslotId));
+                    var available = !(presenter.UnavailableForTimeslots != null && presenter.UnavailableForTimeslots.Contains(timeslotId));
                     this.Add(new PresenterAvailability() 
                     { 
                         PresenterId = presenter.Id,

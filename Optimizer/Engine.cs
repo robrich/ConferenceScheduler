@@ -19,7 +19,7 @@ namespace ConferenceScheduler.Optimizer
         /// <param name="timeslots">A list of time slots during which sessions can be delivered.</param>
         /// <param name="settings">A dictionary of configuration settings for the process.</param>
         /// <returns>A collection of assignments representing the room and Timeslot in which each session will be delivered.</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "matrix"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "presenterIds"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "speakerIds"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "rooms"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "sessions"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "timeslots"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "settings"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "settings")]
         public IEnumerable<Assignment> Process(IEnumerable<Session> sessions, IEnumerable<Room> rooms, IEnumerable<Timeslot> timeslots, IDictionary<string, string> settings)
         {
             var result = new List<Assignment>();
@@ -29,6 +29,9 @@ namespace ConferenceScheduler.Optimizer
                 // TODO: Subtract out any times that specific rooms are not available
                 if (sessions.Count() > (rooms.Count() * timeslots.Count()))
                     throw new Exceptions.NoFeasibleSolutionsException();
+
+                if (sessions.Count(s => s.Presenters == null || s.Presenters.Count() < 1) > 0)
+                    throw new ArgumentException("Every session must have at least one presenter.");
 
                 // Create the presenter availability matrix
                 var presenters = sessions.SelectMany(s => s.Presenters).Distinct();

@@ -39,13 +39,13 @@ namespace ConferenceScheduler.Optimizer.Test
         {
             Engine engine = new Engine();
             var sessions = new List<Session>();
-            sessions.Add(new Session() { });
+            sessions.Add(CreateSession(1, 1));
 
             var rooms = new List<Room>();
-            rooms.Add(new Room() { });
+            rooms.Add(new Room() { Id = 1 });
 
             var timeslots = new List<Timeslot>();
-            timeslots.Add(new Timeslot() { });
+            timeslots.Add(new Timeslot() { Id = 1 });
 
             var assignments = engine.Process(sessions, rooms, timeslots, null);
             Assert.True(true, "An error occurred when no settings were supplied.");
@@ -56,7 +56,7 @@ namespace ConferenceScheduler.Optimizer.Test
         {
             Engine engine = new Engine();
             var sessions = new List<Session>();
-            sessions.Add(new Session() { Id = 1 });
+            sessions.Add(CreateSession(1,1));
 
             var rooms = new List<Room>();
             rooms.Add(new Room() { Id = 1 });
@@ -72,19 +72,7 @@ namespace ConferenceScheduler.Optimizer.Test
         public void ThrowNoFeasibleSolutionIfSpeakerIsUnavailableForAllTimeslots()
         {
             var sessions = new List<Session>();
-            var session = new Session() 
-                { 
-                    Id = 1, 
-                    Presenters = new List<Presenter>() 
-                        { 
-                            new Presenter() 
-                                { 
-                                    Id = 1,  
-                                    UnavailableForTimeslots = new List<Int16>() { 1 }
-                                } 
-                        } 
-                };
-            sessions.Add(session);
+            sessions.Add(CreateSession(1, 1, 1));
 
             var rooms = new List<Room>();
             rooms.Add(new Room() { Id = 1 });
@@ -101,8 +89,8 @@ namespace ConferenceScheduler.Optimizer.Test
         {
             Engine engine = new Engine();
             var sessions = new List<Session>();
-            sessions.Add(new Session() { Id = 1 });
-            sessions.Add(new Session() { Id = 2 });
+            sessions.Add(CreateSession(1, 1));
+            sessions.Add(CreateSession(2, 2));
 
             var rooms = new List<Room>();
             rooms.Add(new Room() { Id = 1 });
@@ -112,5 +100,42 @@ namespace ConferenceScheduler.Optimizer.Test
 
             var assignments = engine.Process(sessions, rooms, timeslots, null);
         }
+
+        [Test, ExpectedException(typeof(ArgumentException))]
+        public void ThrowArgumentExceptionIfThereIsntAtLeastOnePresenterForEachSession()
+        {
+            Engine engine = new Engine();
+            var sessions = new List<Session>();
+            sessions.Add(CreateSession(1, 1));
+            sessions.Add(new Session() { Id = 2 });
+
+            var rooms = new List<Room>();
+            rooms.Add(new Room() { Id = 1 });
+
+            var timeslots = new List<Timeslot>();
+            timeslots.Add(new Timeslot() { Id = 1 });
+            timeslots.Add(new Timeslot() { Id = 2 });
+
+            var assignments = engine.Process(sessions, rooms, timeslots, null);
+        }
+
+
+
+        private static Session CreateSession(int id, Int16 presenterId, params Int16[] presenterUnavailableForTimeslots)
+        {
+            return new Session()
+            {
+                Id = id,
+                Presenters = new List<Presenter>() 
+                        { 
+                            new Presenter() 
+                                { 
+                                    Id = presenterId,  
+                                    UnavailableForTimeslots = presenterUnavailableForTimeslots.AsEnumerable()
+                                } 
+                        }
+            };
+        }
+
     }
 }
