@@ -12,7 +12,7 @@ namespace ConferenceScheduler.Optimizer
         ICollection<int> _presenterIds;
         ICollection<int> _timeslotIds;
 
-        public PresenterAvailablityCollection(IEnumerable<Entities.Presenter> presenters, IEnumerable<Int16> timeslotIds)
+        public PresenterAvailablityCollection(IEnumerable<Entities.Presenter> presenters, IEnumerable<int> timeslotIds)
         {
             Load(presenters, timeslotIds);
         }
@@ -22,7 +22,7 @@ namespace ConferenceScheduler.Optimizer
             get { return GetFeasibility(); }
         }
 
-        private void Load(IEnumerable<Entities.Presenter> presenters, IEnumerable<Int16> timeslotIds)
+        private void Load(IEnumerable<Entities.Presenter> presenters, IEnumerable<int> timeslotIds)
         {
             _presenterIds = new List<int>();
             _timeslotIds = new List<int>();

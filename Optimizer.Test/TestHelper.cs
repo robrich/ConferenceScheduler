@@ -10,7 +10,7 @@ namespace ConferenceScheduler.Optimizer.Test
     internal class TestHelper
     {
 
-        internal static Session CreateSession(int id, Int16 presenterId, params Int16[] presenterUnavailableForTimeslots)
+        internal static Session CreateSession(int id, int presenterId, params int[] presenterUnavailableForTimeslots)
         {
             return new Session()
             {
@@ -19,7 +19,7 @@ namespace ConferenceScheduler.Optimizer.Test
             };
         }
 
-        internal static IEnumerable<Presenter> CreatePresenter(Int16 id, Int16[] presenterUnavailableForTimeslots)
+        internal static IEnumerable<Presenter> CreatePresenter(int id, int[] presenterUnavailableForTimeslots)
         {
             return new List<Presenter>() 
             { 
@@ -40,7 +40,7 @@ namespace ConferenceScheduler.Optimizer.Test
             };
         }
 
-        internal static Timeslot CreateTimeslot(Int16 id)
+        internal static Timeslot CreateTimeslot(int id)
         {
             return new Timeslot()
             {
