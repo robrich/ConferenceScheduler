@@ -10,10 +10,10 @@ using ConferenceScheduler.Entities;
 namespace ConferenceScheduler.Optimizer.Test
 {
     [TestFixture]
-    public class Engine_Process_Should
+    public class Engine_Process_ShouldValidateBy
     {
         [Test]
-        public void RunSuccessfullyIfNoDataObjectsSupplied()
+        public void RunningSuccessfullyIfNoDataObjectsSupplied()
         {
             Engine engine = new Engine();
             var assignments = engine.Process(null, null, null, null);
@@ -22,7 +22,7 @@ namespace ConferenceScheduler.Optimizer.Test
         }
 
         [Test]
-        public void RunSuccessfullyIfNoDataValuesSupplied()
+        public void RunningSuccessfullyIfNoDataValuesSupplied()
         {
             Engine engine = new Engine();
             var sessions = new List<Session>();
@@ -35,7 +35,7 @@ namespace ConferenceScheduler.Optimizer.Test
         }
 
         [Test]
-        public void RunSuccessfullyIfNoSettingsSupplied()
+        public void RunningSuccessfullyIfNoSettingsSupplied()
         {
             Engine engine = new Engine();
             var sessions = new List<Session>();
@@ -52,7 +52,7 @@ namespace ConferenceScheduler.Optimizer.Test
         }
 
         [Test, ExpectedException(typeof(Exceptions.NoFeasibleSolutionsException))]
-        public void ThrowNoFeasibleSolutionIfThereAreMoreSessionsThanSlotsAndRooms()
+        public void ThrowingNoFeasibleSolutionIfThereAreMoreSessionsThanSlotsAndRooms()
         {
             Engine engine = new Engine();
             var sessions = new List<Session>();
@@ -69,7 +69,7 @@ namespace ConferenceScheduler.Optimizer.Test
         }
 
         [Test, ExpectedException(typeof(ArgumentException))]
-        public void ThrowArgumentExceptionIfThereIsntAtLeastOnePresenterForEachSession()
+        public void ThrowingArgumentExceptionIfThereIsntAtLeastOnePresenterForEachSession()
         {
             Engine engine = new Engine();
             var sessions = new List<Session>();
@@ -84,23 +84,6 @@ namespace ConferenceScheduler.Optimizer.Test
             timeslots.Add(TestHelper.CreateTimeslot(2));
 
             var assignments = engine.Process(sessions, rooms, timeslots, null);
-        }
-
-        [Test]
-        public void ReturnTheOnlyPossibleAssignmentIfOneSessionRoomAndSlotAreSupplied()
-        {
-            Engine engine = new Engine();
-            var sessions = new List<Session>();
-            sessions.Add(TestHelper.CreateSession(1, 1));
-
-            var rooms = new List<Room>();
-            rooms.Add(TestHelper.CreateRoom(1, 10));
-
-            var timeslots = new List<Timeslot>();
-            timeslots.Add(TestHelper.CreateTimeslot(1));
-
-            var assignments = engine.Process(sessions, rooms, timeslots, null);
-            Assert.That(assignments.Count(), Is.EqualTo(1), "The wrong number of assignments were returned.");
         }
 
     }
