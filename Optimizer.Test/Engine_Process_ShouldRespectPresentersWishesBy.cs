@@ -25,7 +25,7 @@ namespace ConferenceScheduler.Optimizer.Test
             timeslots.Add(new Timeslot() { Id = 1 });
 
             Engine engine = new Engine();
-            var assignments = engine.Process(sessions, rooms, timeslots, null);
+            var assignments = engine.Process(sessions, rooms, timeslots);
         }
 
         [Test]
@@ -43,7 +43,7 @@ namespace ConferenceScheduler.Optimizer.Test
             timeslots.Add(TestHelper.CreateTimeslot(1));
             timeslots.Add(TestHelper.CreateTimeslot(2));
 
-            var assignments = engine.Process(sessions, rooms, timeslots, null);
+            var assignments = engine.Process(sessions, rooms, timeslots);
             var checkAssignment = assignments.Where(a => a.SessionId == 2).Single();
 
             Assert.That(checkAssignment.TimeslotId, Is.EqualTo(1), "Session 2 should have been assigned to slot 1.");
@@ -66,7 +66,7 @@ namespace ConferenceScheduler.Optimizer.Test
             timeslots.Add(TestHelper.CreateTimeslot(2));
             timeslots.Add(TestHelper.CreateTimeslot(3));
 
-            var assignments = engine.Process(sessions, rooms, timeslots, null);
+            var assignments = engine.Process(sessions, rooms, timeslots);
             var checkAssignment = assignments.Where(a => a.SessionId == 3).Single();
 
             Assert.That(checkAssignment.TimeslotId, Is.EqualTo(2), "Session 3 should have been assigned to slot 2.");
