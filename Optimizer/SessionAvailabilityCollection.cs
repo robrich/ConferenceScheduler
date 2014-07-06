@@ -34,12 +34,13 @@ namespace ConferenceScheduler.Optimizer
             return this.Where(sa => !sa.Assigned && sa.SessionIds.Count() == 1);
         }
 
-        internal void Assign(Assignment assignment)
+        internal void Assign(Assignment assignment, int sessionId)
         {
-            var items = this.Where(i => i.SessionIds.Contains(assignment.SessionId.Value));
+            assignment.SessionId = sessionId;
+            var items = this.Where(i => i.SessionIds.Contains(sessionId));
             foreach (var item in items)
             {
-                item.SessionIds.Remove(assignment.SessionId.Value);
+                item.SessionIds.Remove(sessionId);
                 if (item.RoomId == assignment.RoomId && item.TimeslotId == assignment.TimeslotId)
                     item.Assigned = true;
             }  

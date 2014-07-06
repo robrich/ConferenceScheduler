@@ -38,8 +38,8 @@ namespace ConferenceScheduler.Optimizer.Test
         public void RunningSuccessfullyIfNoSettingsSupplied()
         {
             Engine engine = new Engine();
-            var sessions = new List<Session>();
-            sessions.Add(TestHelper.CreateSession(1, 1));
+            var sessions = new SessionsCollection();
+            sessions.Add(1, 1);
 
             var rooms = new List<Room>();
             rooms.Add(TestHelper.CreateRoom(1, 10));
@@ -55,9 +55,9 @@ namespace ConferenceScheduler.Optimizer.Test
         public void ThrowingNoFeasibleSolutionIfThereAreMoreSessionsThanSlotsAndRooms()
         {
             Engine engine = new Engine();
-            var sessions = new List<Session>();
-            sessions.Add(TestHelper.CreateSession(1, 1));
-            sessions.Add(TestHelper.CreateSession(2, 2));
+            var sessions = new SessionsCollection();
+            sessions.Add(1, 1);
+            sessions.Add(2, 2);
 
             var rooms = new List<Room>();
             rooms.Add(TestHelper.CreateRoom(1, 10));
@@ -72,8 +72,8 @@ namespace ConferenceScheduler.Optimizer.Test
         public void ThrowingArgumentExceptionIfThereIsntAtLeastOnePresenterForEachSession()
         {
             Engine engine = new Engine();
-            var sessions = new List<Session>();
-            sessions.Add(TestHelper.CreateSession(1, 1));
+            var sessions = new SessionsCollection();
+            sessions.Add(1, 1);
             sessions.Add(new Session() { Id = 2 });
 
             var rooms = new List<Room>();
@@ -94,9 +94,10 @@ namespace ConferenceScheduler.Optimizer.Test
 
             var presenter1 = TestHelper.CreatePresenter(1, 2);
             var presenter2 = TestHelper.CreatePresenter(2, 1);
-            var presenters = new List<Presenter>() { presenter1, presenter2 };
 
-            var sessions = new List<Session>() { TestHelper.CreateSession(1, presenters) };
+            var sessions = new SessionsCollection();
+            sessions.Add(1, presenter1, presenter2);
+
             var rooms = new List<Room>() { TestHelper.CreateRoom(1, 10) };
 
             var timeslots = new List<Timeslot>();

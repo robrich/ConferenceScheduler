@@ -21,6 +21,6 @@ namespace ConferenceScheduler.Entities
         public IEnumerable<Presenter> Presenters { get; set; }
 
 
-        internal int AvailableTimeslotCount { get; set; }
+        // internal int AvailableTimeslotCount { get; set; }
     }
 }

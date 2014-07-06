@@ -15,8 +15,8 @@ namespace ConferenceScheduler.Optimizer.Test
         [Test, ExpectedException(typeof(Exceptions.NoFeasibleSolutionsException))]
         public void ThrowingNoFeasibleSolutionIfSpeakerIsUnavailableForAllTimeslots()
         {
-            var sessions = new List<Session>();
-            sessions.Add(TestHelper.CreateSession(1, 1, 1));
+            var sessions = new SessionsCollection();
+            sessions.Add(1, 1, 1);
 
             var rooms = new List<Room>();
             rooms.Add(TestHelper.CreateRoom(1, 10));
@@ -32,9 +32,9 @@ namespace ConferenceScheduler.Optimizer.Test
         public void ReturningTheCorrectAssignmentIfOneSpeakerIsAvailableForOnlyOneSlot()
         {
             Engine engine = new Engine();
-            var sessions = new List<Session>();
-            sessions.Add(TestHelper.CreateSession(1, 1));
-            sessions.Add(TestHelper.CreateSession(2, 2, 2)); // Only available for slot 1
+            var sessions = new SessionsCollection();
+            sessions.Add(1, 1);
+            sessions.Add(2, 2, 2); // Only available for slot 1
 
             var rooms = new List<Room>();
             rooms.Add(TestHelper.CreateRoom(1, 10));
@@ -53,10 +53,10 @@ namespace ConferenceScheduler.Optimizer.Test
         public void ReturningTheCorrectAssignmentIfTwoSpeakersAreAvailableForTwoOfTheThreeSlots()
         {
             Engine engine = new Engine();
-            var sessions = new List<Session>();
-            sessions.Add(TestHelper.CreateSession(1, 1, 2));    // Not available for slot 2
-            sessions.Add(TestHelper.CreateSession(2, 2, 2));    // Not available for slot 2
-            sessions.Add(TestHelper.CreateSession(3, 3));       // Available for all but must be assigned to slot 2
+            var sessions = new SessionsCollection();
+            sessions.Add(1, 1, 2);    // Not available for slot 2
+            sessions.Add(2, 2, 2);    // Not available for slot 2
+            sessions.Add(3, 3);       // Available for all but must be assigned to slot 2
 
             var rooms = new List<Room>();
             rooms.Add(TestHelper.CreateRoom(1, 10));

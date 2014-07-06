@@ -22,7 +22,7 @@ namespace ConferenceScheduler.Optimizer
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "session"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "room"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "timeslot"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "settings")]
         public IEnumerable<Assignment> Process(IEnumerable<Session> sessions, IEnumerable<Room> rooms, IEnumerable<Timeslot> timeslots, IDictionary<string, string> settings)
         {
-            var result = new List<Assignment>();
+            var result = new AssignmentCollection();
             if (sessions != null && rooms != null && timeslots != null)
             {
                 // Make sure there are enough slots/rooms for all of the sessions
@@ -50,53 +50,32 @@ namespace ConferenceScheduler.Optimizer
                     foreach (var timeslot in timeslots)
                         result.Add(new Assignment(room.Id, timeslot.Id));
 
-                // If any room-timeslot combinations only have 1 session available, assign it
-                var itemsWithOneOption = sessionMatrix.GetUnassignedItemsWithOnlyOneOption();
-                while (itemsWithOneOption.Count() > 0)
+                while (result.AssignmentsCompleted < sessions.Count())
                 {
-                    var item = itemsWithOneOption.First();
-                    var assignment = result.Where(a => a.RoomId == item.RoomId && a.TimeslotId == item.TimeslotId).Single();
-                    assignment.SessionId = item.SessionIds.Single();
-                    presenterMatrix.RemovePresentersFromSlots(assignment, sessions.Where(s => s.Id == assignment.SessionId).Single());
-                    sessionMatrix.Assign(assignment);
-                    itemsWithOneOption = sessionMatrix.GetUnassignedItemsWithOnlyOneOption();
-                }
+                    // If any room-timeslot combinations only have 1 session available, assign them
+                    var itemsWithOneOption = sessionMatrix.GetUnassignedItemsWithOnlyOneOption();
+                    while (itemsWithOneOption.Count() > 0)
+                    {
+                        var item = itemsWithOneOption.First();
+                        var assignment = result.GetAssignment(item.RoomId, item.TimeslotId);
+                        sessionMatrix.Assign(assignment, item.SessionIds.Single());
+                        presenterMatrix.RemovePresentersFromSlots(assignment, sessions.Where(s => s.Id == assignment.SessionId).Single());
+                        itemsWithOneOption = sessionMatrix.GetUnassignedItemsWithOnlyOneOption();
+                    }
 
-                // TODO: Refactor this to use the sessionMatrix above
-                // Can (or should) we then get rid of the presenterMatrix?
-                var session = GetUnassignedSessionWithFewestAvailableSlots(result, sessions, presenterMatrix);
-                while (session != null)
-                {
-                    var availableTimeslots = presenterMatrix.GetAvailableTimeslotIds(session.Presenters);
-                    var unassignedMatrix = result.Where(a => a.SessionId == null && availableTimeslots.Contains(a.TimeslotId));
-                    var target = unassignedMatrix.First();
-                    target.SessionId = session.Id;
-                    session = GetUnassignedSessionWithFewestAvailableSlots(result, sessions, presenterMatrix);
+                    var session = result.GetUnassignedSessionWithFewestAvailableSlots(sessions, presenterMatrix);
+                    if (session != null)
+                    {
+                        var availableTimeslots = presenterMatrix.GetAvailableTimeslotIds(session.Presenters);
+                        var unassignedMatrix = result.Where(a => a.SessionId == null && availableTimeslots.Contains(a.TimeslotId));
+                        var assignment = unassignedMatrix.First();
+                        sessionMatrix.Assign(assignment, session.Id);
+                        session = result.GetUnassignedSessionWithFewestAvailableSlots(sessions, presenterMatrix);
+                    }
                 }
-
 
                 //TODO: Add value 
             }
-            return result;
-        }
-
-        private static Session GetUnassignedSessionWithFewestAvailableSlots(IEnumerable<Assignment> assignments, IEnumerable<Session> sessions, PresenterAvailablityCollection presenterMatrix)
-        {
-            Session result = null;
-            var assignedSessionIds = assignments.Where(a => a.SessionId != null).Select(a => a.SessionId);
-            var sessionDictionary = new Dictionary<int, int>();
-            foreach (var session in sessions.Where(s => !assignedSessionIds.Contains(s.Id)))
-            {
-                sessionDictionary.Add(session.Id, presenterMatrix.GetAvailableTimeslotIds(session.Presenters).Count());
-            }
-
-            if (sessionDictionary.Count() > 0)
-            {
-                var min = sessionDictionary.Min(s => s.Value);
-                var key = sessionDictionary.FirstOrDefault(sd => sd.Value == min).Key;
-                result = sessions.Where(s => s.Id == key).Single();
-            }
-
             return result;
         }
 
