@@ -28,6 +28,48 @@ namespace ConferenceScheduler.Optimizer.Test
             var assignments = engine.Process(sessions, rooms, timeslots, null);
         }
 
+        [Test]
+        public void ReturningTheCorrectAssignmentIfOneSpeakerIsAvailableForOnlyOneSlot()
+        {
+            Engine engine = new Engine();
+            var sessions = new List<Session>();
+            sessions.Add(TestHelper.CreateSession(1, 1));
+            sessions.Add(TestHelper.CreateSession(2, 2, 2)); // Only available for slot 1
 
+            var rooms = new List<Room>();
+            rooms.Add(TestHelper.CreateRoom(1, 10));
+
+            var timeslots = new List<Timeslot>();
+            timeslots.Add(TestHelper.CreateTimeslot(1));
+            timeslots.Add(TestHelper.CreateTimeslot(2));
+
+            var assignments = engine.Process(sessions, rooms, timeslots, null);
+            var checkAssignment = assignments.Where(a => a.SessionId == 2).Single();
+
+            Assert.That(checkAssignment.TimeslotId, Is.EqualTo(1), "Session 2 should have been assigned to slot 1.");
+        }
+
+        [Test]
+        public void ReturningTheCorrectAssignmentIfTwoSpeakersAreAvailableForTwoOfTheThreeSlots()
+        {
+            Engine engine = new Engine();
+            var sessions = new List<Session>();
+            sessions.Add(TestHelper.CreateSession(1, 1, 2));    // Not available for slot 2
+            sessions.Add(TestHelper.CreateSession(2, 2, 2));    // Not available for slot 2
+            sessions.Add(TestHelper.CreateSession(3, 3));       // Available for all but must be assigned to slot 2
+
+            var rooms = new List<Room>();
+            rooms.Add(TestHelper.CreateRoom(1, 10));
+
+            var timeslots = new List<Timeslot>();
+            timeslots.Add(TestHelper.CreateTimeslot(1));
+            timeslots.Add(TestHelper.CreateTimeslot(2));
+            timeslots.Add(TestHelper.CreateTimeslot(3));
+
+            var assignments = engine.Process(sessions, rooms, timeslots, null);
+            var checkAssignment = assignments.Where(a => a.SessionId == 3).Single();
+
+            Assert.That(checkAssignment.TimeslotId, Is.EqualTo(2), "Session 3 should have been assigned to slot 2.");
+        }
     }
 }

@@ -19,5 +19,8 @@ namespace ConferenceScheduler.Entities
         /// Contains the list of presenters for the session
         /// </summary>
         public IEnumerable<Presenter> Presenters { get; set; }
+
+
+        internal int AvailableTimeslotCount { get; set; }
     }
 }

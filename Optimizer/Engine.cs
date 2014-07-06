@@ -36,24 +36,50 @@ namespace ConferenceScheduler.Optimizer
                 // Create the presenter availability matrix
                 var presenters = sessions.SelectMany(s => s.Presenters).Distinct();
                 var timeslotIds = timeslots.Select(ts => ts.Id);
-                var matrix = new PresenterAvailablityCollection(presenters, timeslotIds);
-                if (!matrix.IsFeasible)
+                var presenterMatrix = new PresenterAvailablityCollection(presenters, timeslotIds);
+                if (!presenterMatrix.IsFeasible)
                     throw new Exceptions.NoFeasibleSolutionsException();
 
-                foreach (var session in sessions)
+                // Setup the empty assignment matrix
+                foreach (var room in rooms)
+                    foreach (var timeslot in timeslots)
+                        result.Add(new Assignment(room.Id, timeslot.Id));
+
+                var session = GetUnassignedSessionWithFewestAvailableSlots(result, sessions, presenterMatrix);
+                while (session != null)
                 {
-                    foreach (var room in rooms)
-                    {
-                        foreach (var timeslot in timeslots)
-                        {
-                            result.Add(new Assignment() { });
-                        }
-                    }
+                    var availableTimeslots = presenterMatrix.GetAvailableTimeslotIds(session.Presenters);
+                    var unassignedMatrix = result.Where(a => a.SessionId == null && availableTimeslots.Contains(a.TimeslotId));
+                    var target = unassignedMatrix.First();
+                    target.SessionId = session.Id;
+                    session = GetUnassignedSessionWithFewestAvailableSlots(result, sessions, presenterMatrix);
                 }
+
 
                 //TODO: Add value 
             }
             return result;
         }
+
+        private static Session GetUnassignedSessionWithFewestAvailableSlots(IEnumerable<Assignment> assignments, IEnumerable<Session> sessions, PresenterAvailablityCollection presenterMatrix)
+        {
+            Session result = null;
+            var assignedSessionIds = assignments.Where(a => a.SessionId != null).Select(a => a.SessionId);
+            var sessionDictionary = new Dictionary<int, int>();
+            foreach (var session in sessions.Where(s => !assignedSessionIds.Contains(s.Id)))
+            {
+                sessionDictionary.Add(session.Id, presenterMatrix.GetAvailableTimeslotIds(session.Presenters).Count());
+            }
+
+            if (sessionDictionary.Count() > 0)
+            {
+                var min = sessionDictionary.Min(s => s.Value);
+                var key = sessionDictionary.FirstOrDefault(sd => sd.Value == min).Key;
+                result = sessions.Where(s => s.Id == key).Single();
+            }
+
+            return result;
+        }
+
     }
 }

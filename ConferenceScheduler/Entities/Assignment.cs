@@ -11,5 +11,45 @@ namespace ConferenceScheduler.Entities
     /// </summary>
     public class Assignment
     {
+        /// <summary>
+        /// Create an instance of a session-room-timeslot assignment
+        /// </summary>
+        public Assignment()
+        {
+        }
+
+        /// <summary>
+        /// Create an instance of a room-timeslot node with a null session
+        /// </summary>
+        public Assignment(int roomId, int timeslotId)
+        {
+            this.TimeslotId = timeslotId;
+            this.RoomId = roomId;
+        }
+
+        /// <summary>
+        /// Create an instance of a session-room-timeslot assignment
+        /// </summary>
+        public Assignment(int sessionId, int roomId, int timeslotId)
+        {
+            this.SessionId = sessionId;
+            this.TimeslotId = timeslotId;
+            this.RoomId = roomId;
+        }
+
+        /// <summary>
+        /// The Id of the session in this assignment
+        /// </summary>
+        public int? SessionId { get; set; }
+
+        /// <summary>
+        /// The Id of the room for this assignment
+        /// </summary>
+        public int RoomId { get; set; }
+
+        /// <summary>
+        /// The Id of the timeslot of this assignment
+        /// </summary>
+        public int TimeslotId { get; set; }
     }
 }

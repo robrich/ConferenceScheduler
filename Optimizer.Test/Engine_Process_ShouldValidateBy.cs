@@ -86,5 +86,25 @@ namespace ConferenceScheduler.Optimizer.Test
             var assignments = engine.Process(sessions, rooms, timeslots, null);
         }
 
+        [Test, ExpectedException(typeof(Exceptions.NoFeasibleSolutionsException))]
+        public void ThrowingNoFeasibleSolutionIfAvailableTimeslotsForAMultiPresenterSessionDontIntersect()
+        {
+            // 2 presenters for one session where neither
+            // is available to present when the other is available
+
+            var presenter1 = TestHelper.CreatePresenter(1, 2);
+            var presenter2 = TestHelper.CreatePresenter(2, 1);
+            var presenters = new List<Presenter>() { presenter1, presenter2 };
+
+            var sessions = new List<Session>() { TestHelper.CreateSession(1, presenters) };
+            var rooms = new List<Room>() { TestHelper.CreateRoom(1, 10) };
+
+            var timeslots = new List<Timeslot>();
+            timeslots.Add(TestHelper.CreateTimeslot(1));
+            timeslots.Add(TestHelper.CreateTimeslot(2));
+
+            Engine engine = new Engine();
+            var assignments = engine.Process(sessions, rooms, timeslots, null);
+        }
     }
 }

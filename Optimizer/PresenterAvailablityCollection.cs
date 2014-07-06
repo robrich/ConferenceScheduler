@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using ConferenceScheduler.Entities;
 
 namespace ConferenceScheduler.Optimizer
 {
@@ -12,7 +13,7 @@ namespace ConferenceScheduler.Optimizer
         ICollection<int> _presenterIds;
         ICollection<int> _timeslotIds;
 
-        public PresenterAvailablityCollection(IEnumerable<Entities.Presenter> presenters, IEnumerable<int> timeslotIds)
+        public PresenterAvailablityCollection(IEnumerable<Presenter> presenters, IEnumerable<int> timeslotIds)
         {
             Load(presenters, timeslotIds);
         }
@@ -20,6 +21,19 @@ namespace ConferenceScheduler.Optimizer
         public bool IsFeasible
         {
             get { return GetFeasibility(); }
+        }
+
+        public IEnumerable<int> GetAvailableTimeslotIds(IEnumerable<Presenter> presenters)
+        {
+            IEnumerable<int> availableSlots = _timeslotIds.ToList();
+            foreach (var presenter in presenters)
+                availableSlots = availableSlots.Intersect(GetAvailableTimeslotIds(presenter.Id));
+            return availableSlots;
+        }
+
+        public IEnumerable<int> GetAvailableTimeslotIds(int presenterId)
+        {
+            return this.Where(pa => pa.PresenterId == presenterId && pa.IsAvailable).Select(pa => pa.TimeslotId).ToList();
         }
 
         private void Load(IEnumerable<Entities.Presenter> presenters, IEnumerable<int> timeslotIds)
