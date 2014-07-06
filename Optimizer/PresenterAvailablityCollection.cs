@@ -67,5 +67,15 @@ namespace ConferenceScheduler.Optimizer
             }
             return result;
         }
+
+        internal void RemovePresentersFromSlots(Assignment assignment, Session session)
+        {
+            foreach (var presenter in session.Presenters)
+	        {
+                var items = this.Where(j => j.PresenterId == presenter.Id && j.TimeslotId == assignment.TimeslotId);
+                foreach (var item in items)
+                    item.IsAvailable = false;
+	        }
+        }
     }
 }

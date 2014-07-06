@@ -9,11 +9,11 @@ namespace ConferenceScheduler.Optimizer
 {
     internal class SessionAvailability
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal int TimeslotId { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal int RoomId { get; set; }
+
+        internal bool Assigned { get; set; }
 
         internal ICollection<int> SessionIds { get; private set; }
 
@@ -21,6 +21,7 @@ namespace ConferenceScheduler.Optimizer
         {
             this.TimeslotId = timeslotId;
             this.RoomId = roomId;
+            this.Assigned = false;
 
             this.SessionIds = new List<int>(sessions.Select(s => s.Id).Distinct());
             foreach (var session in sessions)

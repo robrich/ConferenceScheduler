@@ -51,5 +51,6 @@ namespace ConferenceScheduler.Entities
         /// The Id of the timeslot of this assignment
         /// </summary>
         public int TimeslotId { get; set; }
+
     }
 }

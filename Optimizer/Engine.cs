@@ -19,7 +19,7 @@ namespace ConferenceScheduler.Optimizer
         /// <param name="timeslots">A list of time slots during which sessions can be delivered.</param>
         /// <param name="settings">A dictionary of configuration settings for the process.</param>
         /// <returns>A collection of assignments representing the room and Timeslot in which each session will be delivered.</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "session"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "room"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "timeslot"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "settings")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "session"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "room"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "timeslot"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "settings")]
         public IEnumerable<Assignment> Process(IEnumerable<Session> sessions, IEnumerable<Room> rooms, IEnumerable<Timeslot> timeslots, IDictionary<string, string> settings)
         {
             var result = new List<Assignment>();
@@ -50,6 +50,20 @@ namespace ConferenceScheduler.Optimizer
                     foreach (var timeslot in timeslots)
                         result.Add(new Assignment(room.Id, timeslot.Id));
 
+                // If any room-timeslot combinations only have 1 session available, assign it
+                var itemsWithOneOption = sessionMatrix.GetUnassignedItemsWithOnlyOneOption();
+                while (itemsWithOneOption.Count() > 0)
+                {
+                    var item = itemsWithOneOption.First();
+                    var assignment = result.Where(a => a.RoomId == item.RoomId && a.TimeslotId == item.TimeslotId).Single();
+                    assignment.SessionId = item.SessionIds.Single();
+                    presenterMatrix.RemovePresentersFromSlots(assignment, sessions.Where(s => s.Id == assignment.SessionId).Single());
+                    sessionMatrix.Assign(assignment);
+                    itemsWithOneOption = sessionMatrix.GetUnassignedItemsWithOnlyOneOption();
+                }
+
+                // TODO: Refactor this to use the sessionMatrix above
+                // Can (or should) we then get rid of the presenterMatrix?
                 var session = GetUnassignedSessionWithFewestAvailableSlots(result, sessions, presenterMatrix);
                 while (session != null)
                 {
