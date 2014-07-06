@@ -40,6 +40,11 @@ namespace ConferenceScheduler.Optimizer
                 if (!presenterMatrix.IsFeasible)
                     throw new Exceptions.NoFeasibleSolutionsException();
 
+                // Create the session availability matrix
+                var sessionMatrix = new SessionAvailabilityCollection(sessions, rooms, timeslots);
+                if (!sessionMatrix.IsFeasible)
+                    throw new Exceptions.NoFeasibleSolutionsException();
+
                 // Setup the empty assignment matrix
                 foreach (var room in rooms)
                     foreach (var timeslot in timeslots)
