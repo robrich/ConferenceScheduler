@@ -78,6 +78,9 @@ namespace ConferenceScheduler.Optimizer
                     if (room.AvailableInTimeslot(timeslot.Id))
                         this.Assignments.Add(new Assignment(room.Id, timeslot.Id));
 
+            // Make sure there are enough slots/rooms for all of the sessions
+            if (sessions.Count() > this.Assignments.Count())
+                throw new Exceptions.NoFeasibleSolutionsException("There are not enough rooms and timeslots to accommodate all of the sessions.");
         }
 
         private static void Validate(IEnumerable<Session> sessions, IEnumerable<Room> rooms, IEnumerable<Timeslot> timeslots)
@@ -90,11 +93,6 @@ namespace ConferenceScheduler.Optimizer
 
             if (timeslots == null)
                 throw new ArgumentNullException("timeslots");
-
-            // Make sure there are enough slots/rooms for all of the sessions
-            // TODO: Subtract out any times that specific rooms are not available
-            if (sessions.Count() > (rooms.Count() * timeslots.Count()))
-                throw new Exceptions.NoFeasibleSolutionsException("There are not enough rooms and timeslots to accommodate all of the sessions.");
 
             if (sessions.Count(s => s.Presenters == null || s.Presenters.Count() < 1) > 0)
                 throw new ArgumentException("Every session must have at least one presenter.");
