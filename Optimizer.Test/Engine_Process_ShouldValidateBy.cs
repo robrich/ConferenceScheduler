@@ -12,26 +12,95 @@ namespace ConferenceScheduler.Optimizer.Test
     [TestFixture]
     public class Engine_Process_ShouldValidateBy
     {
-        [Test]
-        public void RunningSuccessfullyIfNoDataObjectsSupplied()
+
+        [Test, ExpectedException(typeof(Exceptions.NoFeasibleSolutionsException))]
+        public void ThrowingNoFeasibleSolutionsExceptionIfNoSessionsSupplied()
         {
+            var sessions = new SessionsCollection();
+
+            var rooms = new List<Room>();
+            rooms.Add(TestHelper.CreateRoom(1, 10));
+
+            var timeslots = new List<Timeslot>();
+            timeslots.Add(TestHelper.CreateTimeslot(1));
+
             Engine engine = new Engine();
-            var assignments = engine.Process(null, null, null);
-            // Assert.That(true, Is.EqualTo(true), "It didn't blow up"); // TODO: when Process() returns something build a real assert
-            Assert.True(true, "An error occurred when no data objects were supplied.");
+            var assignments = engine.Process(sessions, rooms, timeslots);
         }
 
-        [Test]
-        public void RunningSuccessfullyIfNoDataValuesSupplied()
+        [Test, ExpectedException(typeof(ArgumentNullException))]
+        public void ThrowingArgumentNullExceptionIfSessionsIsNull()
         {
-            var sessions = new List<Session>();
-            var rooms = new List<Room>();
-            var timeslots = new List<Timeslot>();
-            var settings = new Dictionary<string, string>();
-            Engine engine = new Engine(settings);
+            IEnumerable<Session> sessions = null;
 
+            var rooms = new List<Room>();
+            rooms.Add(TestHelper.CreateRoom(1, 10));
+
+            var timeslots = new List<Timeslot>();
+            timeslots.Add(TestHelper.CreateTimeslot(1));
+
+            Engine engine = new Engine();
             var assignments = engine.Process(sessions, rooms, timeslots);
-            Assert.True(true, "An error occurred when no data was supplied.");
+        }
+
+        [Test, ExpectedException(typeof(Exceptions.NoFeasibleSolutionsException))]
+        public void ThrowingNoFeasibleSolutionsExceptionIfNoRoomsSupplied()
+        {
+            var sessions = new SessionsCollection();
+            sessions.Add(1, 1);
+
+            var rooms = new List<Room>();
+
+            var timeslots = new List<Timeslot>();
+            timeslots.Add(TestHelper.CreateTimeslot(1));
+
+            Engine engine = new Engine();
+            var assignments = engine.Process(sessions, rooms, timeslots);
+        }
+
+        [Test, ExpectedException(typeof(ArgumentNullException))]
+        public void ThrowingArgumentNullExceptionIfRoomsIsNull()
+        {
+            var sessions = new SessionsCollection();
+            sessions.Add(1, 1);
+
+            IEnumerable<Room> rooms = null;
+
+            var timeslots = new List<Timeslot>();
+            timeslots.Add(TestHelper.CreateTimeslot(1));
+
+            Engine engine = new Engine();
+            var assignments = engine.Process(sessions, rooms, timeslots);
+        }
+
+        [Test, ExpectedException(typeof(Exceptions.NoFeasibleSolutionsException))]
+        public void ThrowingNoFeasibleSolutionsExceptionIfNoTimeslotsSupplied()
+        {
+            var sessions = new SessionsCollection();
+            sessions.Add(1, 1);
+
+            var rooms = new List<Room>();
+            rooms.Add(TestHelper.CreateRoom(1, 10));
+
+            var timeslots = new List<Timeslot>();
+
+            Engine engine = new Engine();
+            var assignments = engine.Process(sessions, rooms, timeslots);
+        }
+
+        [Test, ExpectedException(typeof(ArgumentNullException))]
+        public void ThrowingArgumentNullExceptionIfTimeslotsIsNull()
+        {
+            var sessions = new SessionsCollection();
+            sessions.Add(1, 1);
+
+            var rooms = new List<Room>();
+            rooms.Add(TestHelper.CreateRoom(1, 10));
+
+            IEnumerable<Timeslot> timeslots = null;
+
+            Engine engine = new Engine();
+            var assignments = engine.Process(sessions, rooms, timeslots);
         }
 
         [Test]

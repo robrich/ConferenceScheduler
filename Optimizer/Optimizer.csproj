@@ -52,6 +52,7 @@
     <Compile Include="PresenterAvailablityCollection.cs" />
     <Compile Include="SessionAvailability.cs" />
     <Compile Include="SessionAvailabilityCollection.cs" />
+    <Compile Include="Solution.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
