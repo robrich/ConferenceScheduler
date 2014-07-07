@@ -103,23 +103,6 @@ namespace ConferenceScheduler.Optimizer.Test
             var assignments = engine.Process(sessions, rooms, timeslots);
         }
 
-        [Test]
-        public void RunningSuccessfullyIfNoSettingsSupplied()
-        {
-            Engine engine = new Engine();
-            var sessions = new SessionsCollection();
-            sessions.Add(1, 1);
-
-            var rooms = new List<Room>();
-            rooms.Add(TestHelper.CreateRoom(1, 10));
-
-            var timeslots = new List<Timeslot>();
-            timeslots.Add(TestHelper.CreateTimeslot(1));
-
-            var assignments = engine.Process(sessions, rooms, timeslots);
-            Assert.True(true, "An error occurred when no settings were supplied.");
-        }
-
         [Test, ExpectedException(typeof(Exceptions.NoFeasibleSolutionsException))]
         public void ThrowingNoFeasibleSolutionIfThereAreMoreSessionsThanSlotsAndRooms()
         {

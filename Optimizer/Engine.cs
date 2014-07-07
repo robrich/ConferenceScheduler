@@ -11,22 +11,10 @@ namespace ConferenceScheduler.Optimizer
     /// </summary>
     public class Engine
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
-        IDictionary<string, string> _settings;
-
         /// <summary>
         /// Create an instance of the object
         /// </summary>
         public Engine() { }
-
-        /// <summary>
-        /// Create an instance of the object using the supplied settings
-        /// </summary>
-        /// <param name="settings">A collection of configuration settings</param>
-        public Engine(IDictionary<string, string> settings)
-        {
-            _settings = settings;
-        }
 
         /// <summary>
         /// Returns an optimized conference schedule based on the inputs.

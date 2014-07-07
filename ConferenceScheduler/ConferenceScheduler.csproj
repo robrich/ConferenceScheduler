@@ -47,7 +47,6 @@
     <Compile Include="Entities\Room.cs" />
     <Compile Include="Entities\Session.cs" />
     <Compile Include="Entities\SessionsCollection.cs" />
-    <Compile Include="Entities\SettingsDictionary.cs" />
     <Compile Include="Entities\Timeslot.cs" />
     <Compile Include="Exceptions\NoFeasibleSolutionsException.cs" />
     <Compile Include="GlobalSuppressions.cs" />
