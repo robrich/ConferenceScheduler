@@ -39,7 +39,7 @@ namespace ConferenceScheduler.Optimizer
 
         internal Assignment GetAssignment(int roomId, int timeslotId)
         {
-            return this.Where(a => a.RoomId == roomId && a.TimeslotId == timeslotId).Single();
+            return this.Where(a => a.RoomId == roomId && a.TimeslotId == timeslotId).SingleOrDefault();
         }
     }
 }

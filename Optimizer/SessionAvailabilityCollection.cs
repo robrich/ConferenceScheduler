@@ -26,7 +26,10 @@ namespace ConferenceScheduler.Optimizer
         {
             foreach (var room in rooms)
                 foreach (var timeslot in timeslots)
-                    this.Add(new SessionAvailability(timeslot.Id, room.Id, sessions));
+                {
+                    if (room.AvailableInTimeslot(timeslot.Id))
+                        this.Add(new SessionAvailability(timeslot.Id, room.Id, sessions));
+                }
         }
 
         internal IEnumerable<SessionAvailability> GetUnassignedItemsWithOnlyOneOption()

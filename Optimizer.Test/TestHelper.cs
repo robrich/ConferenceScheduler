@@ -28,6 +28,17 @@ namespace ConferenceScheduler.Optimizer.Test
             };
         }
 
+        internal static Room CreateRoom(int id, int capacity, params int[] roomUnavailableForTimeslots)
+        {
+            return new Room()
+            {
+                Id = id,
+                Capacity = capacity,
+                UnavailableForTimeslots = roomUnavailableForTimeslots.ToList()
+            };
+        }
+
+
         internal static Timeslot CreateTimeslot(int id)
         {
             return new Timeslot()

@@ -30,11 +30,11 @@ namespace ConferenceScheduler.Entities
         /// <summary>
         /// Create an instance of a session-room-timeslot assignment
         /// </summary>
-        public Assignment(int sessionId, int roomId, int timeslotId)
+        public Assignment(int roomId, int timeslotId, int sessionId)
         {
-            this.SessionId = sessionId;
             this.TimeslotId = timeslotId;
             this.RoomId = roomId;
+            this.SessionId = sessionId;
         }
 
         /// <summary>

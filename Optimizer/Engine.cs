@@ -11,6 +11,7 @@ namespace ConferenceScheduler.Optimizer
     /// </summary>
     public class Engine
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
         IDictionary<string, string> _settings;
 
         /// <summary>
@@ -34,6 +35,7 @@ namespace ConferenceScheduler.Optimizer
         /// <param name="rooms">A list of rooms that sessions can be held in along with their associated attributes.</param>
         /// <param name="timeslots">A list of time slots during which sessions can be delivered.</param>
         /// <returns>A collection of assignments representing the room and Timeslot in which each session will be delivered.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
         public IEnumerable<Assignment> Process(IEnumerable<Session> sessions, IEnumerable<Room> rooms, IEnumerable<Timeslot> timeslots)
         {
             var result = new AssignmentCollection();
@@ -62,7 +64,8 @@ namespace ConferenceScheduler.Optimizer
                 // Setup the empty assignment matrix
                 foreach (var room in rooms)
                     foreach (var timeslot in timeslots)
-                        result.Add(new Assignment(room.Id, timeslot.Id));
+                        if (room.AvailableInTimeslot(timeslot.Id))
+                            result.Add(new Assignment(room.Id, timeslot.Id));
 
                 while (result.AssignmentsCompleted < sessions.Count())
                 {
@@ -90,7 +93,8 @@ namespace ConferenceScheduler.Optimizer
 
                 //TODO: Add value 
             }
-            return result;
+
+            return result.Where(a => a.SessionId.HasValue);
         }
 
     }
