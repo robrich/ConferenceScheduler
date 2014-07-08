@@ -37,9 +37,8 @@ namespace ConferenceScheduler.Optimizer
             return this.Where(sa => !sa.Assigned && sa.SessionIds.Count() == 1);
         }
 
-        internal void Assign(Assignment assignment, int sessionId)
+        internal void RemoveAssignedSessions(Assignment assignment, int sessionId)
         {
-            assignment.SessionId = sessionId;
             var items = this.Where(i => i.SessionIds.Contains(sessionId));
             foreach (var item in items)
             {

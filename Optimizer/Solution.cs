@@ -38,9 +38,10 @@ namespace ConferenceScheduler.Optimizer
             while (itemsWithOneOption.Count() > 0)
             {
                 var item = itemsWithOneOption.First();
+                var sessionId = item.SessionIds.Single();
                 var assignment = this.Assignments.GetAssignment(item.RoomId, item.TimeslotId);
-                _sessionMatrix.Assign(assignment, item.SessionIds.Single());
-                _presenterMatrix.RemovePresentersFromSlots(assignment, sessions.Where(s => s.Id == assignment.SessionId).Single());
+                var sessionToAssign = sessions.Where(s => s.Id == sessionId).Single();
+                Assign(assignment, sessionToAssign);
                 itemsWithOneOption = _sessionMatrix.GetUnassignedItemsWithOnlyOneOption();
             }
         }
@@ -53,9 +54,16 @@ namespace ConferenceScheduler.Optimizer
                 var availableTimeslots = _presenterMatrix.GetAvailableTimeslotIds(session.Presenters);
                 var unassignedMatrix = this.Assignments.Where(a => a.SessionId == null && availableTimeslots.Contains(a.TimeslotId));
                 var assignment = unassignedMatrix.First();
-                _sessionMatrix.Assign(assignment, session.Id);
+                Assign(assignment, session);
                 session = this.Assignments.GetUnassignedSessionWithFewestAvailableSlots(sessions, _presenterMatrix);
             }
+        }
+
+        private void Assign(Assignment assignment, Session session)
+        {
+            assignment.SessionId = session.Id;
+            _sessionMatrix.RemoveAssignedSessions(assignment, session.Id);
+            _presenterMatrix.RemovePresentersFromSlots(assignment, session);
         }
 
         private void Load(IEnumerable<Session> sessions, IEnumerable<Room> rooms, IEnumerable<Timeslot> timeslots)
