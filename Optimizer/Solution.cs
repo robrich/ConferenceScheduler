@@ -12,6 +12,12 @@ namespace ConferenceScheduler.Optimizer
         PresenterAvailablityCollection _presenterMatrix;
         SessionAvailabilityCollection _sessionMatrix;
 
+        IEnumerable<Session> _sessions;
+        IEnumerable<Room> _rooms;
+        IEnumerable<Timeslot> _timeslots;
+
+        IEnumerable<Presenter> _presenters;
+
         internal AssignmentCollection Assignments { get; set; }
 
         internal IEnumerable<Assignment> Results
@@ -23,6 +29,15 @@ namespace ConferenceScheduler.Optimizer
         }
 
         internal int AssignmentsCompleted { get { return this.Assignments.AssignmentsCompleted; } }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
+        internal bool IsFeasible
+        {
+            get
+            {
+                return AllConstraintsAreSatisfied();
+            }
+        }
 
         internal Solution(IEnumerable<Session> sessions, IEnumerable<Room> rooms, IEnumerable<Timeslot> timeslots)
         {
@@ -66,8 +81,33 @@ namespace ConferenceScheduler.Optimizer
             _presenterMatrix.RemovePresentersFromSlots(assignment, session);
         }
 
+        private bool AllConstraintsAreSatisfied()
+        {
+            var result = true;
+
+            foreach (var timeslot in _timeslots)
+            {
+                foreach (var presenter in _presenters)
+                {
+                    var sessionsInTimeslot = this.Assignments.Where(a => a.TimeslotId == timeslot.Id && a.SessionId.HasValue).SelectMany(b => _sessions.Where(c => c.Id == b.SessionId));
+                    var presenterSessionCount = sessionsInTimeslot.Count(s => s.Presenters.Select(a => a.Id).Contains(presenter.Id));
+                    if (presenterSessionCount > 1) // A presenter can't present in more than one session at a time
+                        result = false;
+                    else if (presenterSessionCount == 1 && presenter.UnavailableForTimeslots != null && presenter.UnavailableForTimeslots.Contains(timeslot.Id)) // Make sure the presenter is available in the timeslot
+                        result = false;
+                }
+            }
+
+            return result;
+        }
+
         private void Load(IEnumerable<Session> sessions, IEnumerable<Room> rooms, IEnumerable<Timeslot> timeslots)
         {
+            _sessions = sessions;
+            _rooms = rooms;
+            _timeslots = timeslots;
+            _presenters = sessions.SelectMany(s => s.Presenters).Distinct();
+
             // Create the presenter availability matrix
             var presenters = sessions.SelectMany(s => s.Presenters).Distinct();
             var timeslotIds = timeslots.Select(ts => ts.Id);
@@ -106,5 +146,6 @@ namespace ConferenceScheduler.Optimizer
                 throw new ArgumentException("Every session must have at least one presenter.");
 
         }
+
     }
 }

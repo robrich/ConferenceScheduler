@@ -34,7 +34,10 @@ namespace ConferenceScheduler.Optimizer
                 solution.AssignMostConstrainedSession(sessions);
             }
 
-            return solution.Results;
+            if (!solution.IsFeasible)
+                throw new Exceptions.NoFeasibleSolutionsException();
+            else
+                return solution.Results;
         }
 
     }

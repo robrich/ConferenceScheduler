@@ -18,7 +18,7 @@ namespace ConferenceScheduler.Optimizer
         {
             get
             {
-                return (this.Where(a => a.SessionIds.Count() == 0).Count() == 0);
+                return (this.Where(a => !a.Assigned && a.SessionIds.Count() == 0).Count() == 0);
             }
         }
 

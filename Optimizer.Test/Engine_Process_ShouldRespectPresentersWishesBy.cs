@@ -71,5 +71,24 @@ namespace ConferenceScheduler.Optimizer.Test
 
             Assert.That(checkAssignment.TimeslotId, Is.EqualTo(2), "Session 3 should have been assigned to slot 2.");
         }
+
+        [Test, ExpectedException(typeof(Exceptions.NoFeasibleSolutionsException))]
+        public void ThrowingNoFeasibleSolutionIfSpeakerWouldHaveToBeInTwoPlacesAtOnce()
+        {
+            var sessions = new SessionsCollection();
+            sessions.Add(1, 1);
+            sessions.Add(2, 1);
+
+            var rooms = new List<Room>();
+            rooms.Add(TestHelper.CreateRoom(1, 10));
+            rooms.Add(TestHelper.CreateRoom(2, 10));
+
+            var timeslots = new List<Timeslot>();
+            timeslots.Add(new Timeslot() { Id = 1 });
+
+            Engine engine = new Engine();
+            var assignments = engine.Process(sessions, rooms, timeslots);
+        }
+
     }
 }
