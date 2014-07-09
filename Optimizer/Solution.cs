@@ -82,6 +82,7 @@ namespace ConferenceScheduler.Optimizer
             _presenterMatrix.RemovePresentersFromSlots(assignment, session);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         private bool AllConstraintsAreSatisfied()
         {
             var result = true;
@@ -96,6 +97,26 @@ namespace ConferenceScheduler.Optimizer
                         result = false;
                     else if (presenterSessionCount == 1 && presenter.UnavailableForTimeslots != null && presenter.UnavailableForTimeslots.Contains(timeslot.Id)) // Make sure the presenter is available in the timeslot
                         result = false;
+                }
+            }
+
+            var sessionsWithDependencies = _sessions.Where(s => s.Dependencies != null && s.Dependencies.Count() > 0);
+            foreach (var dependentSession in sessionsWithDependencies)
+            {
+                var dependencyAssignment = this.Assignments.GetAssignment(dependentSession.Id);
+                if (dependencyAssignment != null)
+                {
+                    foreach (var dependency in dependentSession.Dependencies)
+                    {
+                        var dependentAssignment = this.Assignments.GetAssignment(dependency.Id);
+                        if (dependentAssignment != null)
+                        {
+                            var dependentTimeslot = _timeslots.Where(t => t.Id == dependentAssignment.TimeslotId).Single();
+                            var dependencyTimeslot = _timeslots.Where(t => t.Id == dependencyAssignment.TimeslotId).Single();
+                            if (dependencyTimeslot.CompareTo(dependentTimeslot) < 0)
+                                result = false;
+                        }
+                    }
                 }
             }
 

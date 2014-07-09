@@ -41,5 +41,10 @@ namespace ConferenceScheduler.Optimizer
         {
             return this.Where(a => a.RoomId == roomId && a.TimeslotId == timeslotId).SingleOrDefault();
         }
+
+        internal Assignment GetAssignment(int sessionId)
+        {
+            return this.Where(a => a.SessionId.HasValue && a.SessionId.Value == sessionId).SingleOrDefault();
+        }
     }
 }

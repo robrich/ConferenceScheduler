@@ -25,8 +25,8 @@ namespace ConferenceScheduler.Optimizer.Test
             rooms.Add(TestHelper.CreateRoom(1, 10));
 
             var timeslots = new List<Timeslot>();
-            timeslots.Add(TestHelper.CreateTimeslot(1));
-            timeslots.Add(TestHelper.CreateTimeslot(2));
+            timeslots.Add(TestHelper.CreateTimeslot(1, 10));
+            timeslots.Add(TestHelper.CreateTimeslot(2, 11));
 
             var assignments = engine.Process(sessions, rooms, timeslots);
             var session1Assignment = assignments.Where(a => a.SessionId.Value == 1).Single();
@@ -46,8 +46,8 @@ namespace ConferenceScheduler.Optimizer.Test
             rooms.Add(TestHelper.CreateRoom(1, 10));
 
             var timeslots = new List<Timeslot>();
-            timeslots.Add(TestHelper.CreateTimeslot(1));
-            timeslots.Add(TestHelper.CreateTimeslot(2));
+            timeslots.Add(TestHelper.CreateTimeslot(1, 10));
+            timeslots.Add(TestHelper.CreateTimeslot(2, 11));
 
             var assignments = engine.Process(sessions, rooms, timeslots);
             var session2Assignment = assignments.Where(a => a.SessionId.Value == 2).Single();

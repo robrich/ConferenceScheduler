@@ -41,9 +41,15 @@ namespace ConferenceScheduler.Optimizer.Test
 
         internal static Timeslot CreateTimeslot(int id)
         {
+            return CreateTimeslot(id, 0);
+        }
+
+        internal static Timeslot CreateTimeslot(int id, Single startHour)
+        {
             return new Timeslot()
             {
-                Id = id
+                Id = id,
+                StartHour = startHour
             };
         }
 
