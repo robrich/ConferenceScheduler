@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Engine_Process_ShouldRespectDependenciesBy.cs" />
     <Compile Include="Engine_Process_ShouldOptimizeBy.cs" />
     <Compile Include="Engine_Process_ShouldRespectVenueNeedsBy.cs" />
     <Compile Include="Engine_Process_ShouldValidateBy.cs" />

@@ -13,6 +13,7 @@ namespace ConferenceScheduler.Optimizer
         SessionAvailabilityCollection _sessionMatrix;
 
         IEnumerable<Session> _sessions;
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
         IEnumerable<Room> _rooms;
         IEnumerable<Timeslot> _timeslots;
 
