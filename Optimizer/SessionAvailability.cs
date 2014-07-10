@@ -15,21 +15,27 @@ namespace ConferenceScheduler.Optimizer
 
         internal bool Assigned { get; set; }
 
-        internal ICollection<int> SessionIds { get; private set; }
+        internal ICollection<int> AvailableSessionIds { get; private set; }
 
-        internal SessionAvailability(int timeslotId, int roomId, IEnumerable<Session> sessions)
+        internal int AvailableSessionCount { get { return this.AvailableSessionIds.Count(); } }
+
+        internal SessionAvailability(int timeslotId, bool isFirstTimeslot, int roomId, IEnumerable<Session> sessions)
         {
             this.TimeslotId = timeslotId;
             this.RoomId = roomId;
             this.Assigned = false;
 
-            this.SessionIds = new List<int>(sessions.Select(s => s.Id).Distinct());
+            this.AvailableSessionIds = sessions.GetSessionIds().ToList();
             foreach (var session in sessions)
             {
+                // A session with dependencies cannot be in the 1st timeslot
+                if (isFirstTimeslot && session.HasDependencies())
+                    this.AvailableSessionIds.Remove(session.Id);
+
                 foreach (var presenter in session.Presenters)
                 {
-                    if (presenter.UnavailableForTimeslots.Contains(timeslotId))
-                        this.SessionIds.Remove(session.Id);
+                    if (presenter.IsUnavailableInTimeslot(timeslotId))
+                        this.AvailableSessionIds.Remove(session.Id);
                 }
             }
         }

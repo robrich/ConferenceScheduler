@@ -30,8 +30,8 @@ namespace ConferenceScheduler.Optimizer
 
             while (solution.AssignmentsCompleted < sessions.Count())
             {
-                solution.AssignSessionsWithOnlyOneOption(sessions);
-                solution.AssignMostConstrainedSession(sessions);
+                solution.AssignSessionsWithOnlyOneOption();
+                solution.AssignMostConstrainedSession();
             }
 
             if (!solution.IsFeasible)

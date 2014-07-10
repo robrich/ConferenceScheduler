@@ -46,12 +46,11 @@ namespace ConferenceScheduler.Optimizer
                 foreach (var timeslotId in timeslotIds)
                 {
                     _timeslotIds.Add(timeslotId);
-                    var available = !(presenter.UnavailableForTimeslots != null && presenter.UnavailableForTimeslots.Contains(timeslotId));
                     this.Add(new PresenterAvailability() 
                     { 
                         PresenterId = presenter.Id,
                         TimeslotId = timeslotId,
-                        IsAvailable = available
+                        IsAvailable = !presenter.IsUnavailableInTimeslot(timeslotId)
                     });
                 }
             }

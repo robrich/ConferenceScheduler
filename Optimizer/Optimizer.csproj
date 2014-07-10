@@ -48,11 +48,14 @@
     <Compile Include="Engine.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="PresenterAvailability.cs" />
+    <Compile Include="PresenterExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PresenterAvailablityCollection.cs" />
     <Compile Include="SessionAvailability.cs" />
     <Compile Include="SessionAvailabilityCollection.cs" />
+    <Compile Include="SessionExtensions.cs" />
     <Compile Include="Solution.cs" />
+    <Compile Include="TimeslotExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

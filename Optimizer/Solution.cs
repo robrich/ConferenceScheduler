@@ -47,31 +47,31 @@ namespace ConferenceScheduler.Optimizer
             Load(sessions, rooms, timeslots);
         }
 
-        internal void AssignSessionsWithOnlyOneOption(IEnumerable<Session> sessions)
+        internal void AssignSessionsWithOnlyOneOption()
         {
             // If any room-timeslot combinations only have 1 session available, assign them
             var itemsWithOneOption = _sessionMatrix.GetUnassignedItemsWithOnlyOneOption();
             while (itemsWithOneOption.Count() > 0)
             {
                 var item = itemsWithOneOption.First();
-                var sessionId = item.SessionIds.Single();
+                var sessionId = item.AvailableSessionIds.Single();
                 var assignment = this.Assignments.GetAssignment(item.RoomId, item.TimeslotId);
-                var sessionToAssign = sessions.Where(s => s.Id == sessionId).Single();
+                var sessionToAssign = _sessions.Where(s => s.Id == sessionId).Single();
                 Assign(assignment, sessionToAssign);
                 itemsWithOneOption = _sessionMatrix.GetUnassignedItemsWithOnlyOneOption();
             }
         }
 
-        internal void AssignMostConstrainedSession(IEnumerable<Session> sessions)
+        internal void AssignMostConstrainedSession()
         {
-            var session = this.Assignments.GetUnassignedSessionWithFewestAvailableSlots(sessions, _presenterMatrix);
+            var session = this.Assignments.GetUnassignedSessionWithFewestAvailableSlots(_sessions, _presenterMatrix);
             if (session != null)
             {
                 var availableTimeslots = _presenterMatrix.GetAvailableTimeslotIds(session.Presenters);
                 var unassignedMatrix = this.Assignments.Where(a => a.SessionId == null && availableTimeslots.Contains(a.TimeslotId));
                 var assignment = unassignedMatrix.First();
                 Assign(assignment, session);
-                session = this.Assignments.GetUnassignedSessionWithFewestAvailableSlots(sessions, _presenterMatrix);
+                session = this.Assignments.GetUnassignedSessionWithFewestAvailableSlots(_sessions, _presenterMatrix);
             }
         }
 

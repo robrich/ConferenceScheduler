@@ -18,31 +18,35 @@ namespace ConferenceScheduler.Optimizer
         {
             get
             {
-                return (this.Where(a => !a.Assigned && a.SessionIds.Count() == 0).Count() == 0);
+                return (this.Where(a => !a.Assigned && a.AvailableSessionCount == 0).Count() == 0);
             }
         }
 
         private void Load(IEnumerable<Entities.Session> sessions, IEnumerable<Entities.Room> rooms, IEnumerable<Entities.Timeslot> timeslots)
         {
+            var firstTimeslotId = timeslots.GetFirstTimeslotId();
             foreach (var room in rooms)
                 foreach (var timeslot in timeslots)
                 {
                     if (room.AvailableInTimeslot(timeslot.Id))
-                        this.Add(new SessionAvailability(timeslot.Id, room.Id, sessions));
+                    {
+                        var isFirstTimeslot = timeslot.Id == firstTimeslotId;
+                        this.Add(new SessionAvailability(timeslot.Id, isFirstTimeslot, room.Id, sessions));
+                    }
                 }
         }
 
         internal IEnumerable<SessionAvailability> GetUnassignedItemsWithOnlyOneOption()
         {
-            return this.Where(sa => !sa.Assigned && sa.SessionIds.Count() == 1);
+            return this.Where(sa => !sa.Assigned && sa.AvailableSessionIds.Count() == 1);
         }
 
         internal void RemoveAssignedSessions(Assignment assignment, int sessionId)
         {
-            var items = this.Where(i => i.SessionIds.Contains(sessionId));
+            var items = this.Where(i => i.AvailableSessionIds.Contains(sessionId));
             foreach (var item in items)
             {
-                item.SessionIds.Remove(sessionId);
+                item.AvailableSessionIds.Remove(sessionId);
                 if (item.RoomId == assignment.RoomId && item.TimeslotId == assignment.TimeslotId)
                     item.Assigned = true;
             }  
