@@ -9,7 +9,7 @@ namespace ConferenceScheduler.Optimizer
 {
     internal class AssignmentCollection: List<Assignment>
     {
-        public int AssignmentsCompleted 
+        public int CompletedAssignmentCount 
         {
             get
             {
@@ -46,5 +46,11 @@ namespace ConferenceScheduler.Optimizer
         {
             return this.Where(a => a.SessionId.HasValue && a.SessionId.Value == sessionId).SingleOrDefault();
         }
+
+        internal IEnumerable<Assignment> GetAssignmentsInTimeslot(int timeslotId)
+        {
+            return this.Where(a => a.TimeslotId == timeslotId && a.SessionId.HasValue);
+        }
+
     }
 }

@@ -29,7 +29,7 @@ namespace ConferenceScheduler.Optimizer
             }
         }
 
-        internal int AssignmentsCompleted { get { return this.Assignments.AssignmentsCompleted; } }
+        internal int AssignmentsCompleted { get { return this.Assignments.CompletedAssignmentCount; } }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
         internal bool IsFeasible
@@ -82,24 +82,14 @@ namespace ConferenceScheduler.Optimizer
             _presenterMatrix.RemovePresentersFromSlots(assignment, session);
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         private bool AllConstraintsAreSatisfied()
         {
+            return PresenterConstraintsSatisfied() && SessionDependencyConstraintsSatisfied();
+        }
+
+        private bool SessionDependencyConstraintsSatisfied()
+        {
             var result = true;
-
-            foreach (var timeslot in _timeslots)
-            {
-                foreach (var presenter in _presenters)
-                {
-                    var sessionsInTimeslot = this.Assignments.Where(a => a.TimeslotId == timeslot.Id && a.SessionId.HasValue).SelectMany(b => _sessions.Where(c => c.Id == b.SessionId));
-                    var presenterSessionCount = sessionsInTimeslot.Count(s => s.Presenters.Select(a => a.Id).Contains(presenter.Id));
-                    if (presenterSessionCount > 1) // A presenter can't present in more than one session at a time
-                        result = false;
-                    else if (presenterSessionCount == 1 && presenter.UnavailableForTimeslots != null && presenter.UnavailableForTimeslots.Contains(timeslot.Id)) // Make sure the presenter is available in the timeslot
-                        result = false;
-                }
-            }
-
             var sessionsWithDependencies = _sessions.Where(s => s.Dependencies != null && s.Dependencies.Count() > 0);
             foreach (var dependentSession in sessionsWithDependencies)
             {
@@ -119,7 +109,24 @@ namespace ConferenceScheduler.Optimizer
                     }
                 }
             }
+            return result;
+        }
 
+        private bool PresenterConstraintsSatisfied()
+        {
+            var result = true;
+            foreach (var timeslot in _timeslots)
+            {
+                foreach (var presenter in _presenters)
+                {
+                    var sessionsInTimeslot = this.Assignments.GetAssignmentsInTimeslot(timeslot.Id).SelectMany(b => _sessions.Where(c => c.Id == b.SessionId));
+                    var presenterSessionCount = sessionsInTimeslot.Count(s => s.Presenters.Select(a => a.Id).Contains(presenter.Id));
+                    if (presenterSessionCount > 1) // A presenter can't present in more than one session at a time
+                        result = false;
+                    else if (presenterSessionCount == 1 && presenter.IsUnavailableInTimeslot(timeslot.Id)) // Make sure the presenter is available in the timeslot
+                        result = false;
+                }
+            }
             return result;
         }
 
