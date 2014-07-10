@@ -20,10 +20,10 @@ namespace ConferenceScheduler.Optimizer.Test
             sessions.Add(1, 1);
 
             var rooms = new List<Room>();
-            rooms.Add(TestHelper.CreateRoom(1, 10));
+            rooms.Add(Room.Create(1, 10));
 
             var timeslots = new List<Timeslot>();
-            timeslots.Add(TestHelper.CreateTimeslot(1));
+            timeslots.Add(Timeslot.Create(1));
 
             var assignments = engine.Process(sessions, rooms, timeslots);
             Assert.That(assignments.Count(), Is.EqualTo(1), "The wrong number of assignments were returned.");
@@ -43,16 +43,16 @@ namespace ConferenceScheduler.Optimizer.Test
             sessions.Add(7, 3);
 
             var rooms = new List<Room>();
-            rooms.Add(TestHelper.CreateRoom(1, 10));
-            rooms.Add(TestHelper.CreateRoom(2, 10));
-            rooms.Add(TestHelper.CreateRoom(3, 10));
+            rooms.Add(Room.Create(1, 10));
+            rooms.Add(Room.Create(2, 10));
+            rooms.Add(Room.Create(3, 10));
 
             var timeslots = new List<Timeslot>();
-            timeslots.Add(TestHelper.CreateTimeslot(1));
-            timeslots.Add(TestHelper.CreateTimeslot(2));
-            timeslots.Add(TestHelper.CreateTimeslot(3));
-            timeslots.Add(TestHelper.CreateTimeslot(4));
-            timeslots.Add(TestHelper.CreateTimeslot(5));
+            timeslots.Add(Timeslot.Create(1));
+            timeslots.Add(Timeslot.Create(2));
+            timeslots.Add(Timeslot.Create(3));
+            timeslots.Add(Timeslot.Create(4));
+            timeslots.Add(Timeslot.Create(5));
 
             var assignments = engine.Process(sessions, rooms, timeslots);
             var assignmentsWithSessions = assignments.Where(a => a.SessionId.HasValue);

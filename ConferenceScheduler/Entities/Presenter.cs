@@ -20,5 +20,21 @@ namespace ConferenceScheduler.Entities
         /// The list of timeslot Ids during which the person cannot present
         /// </summary>
         public IEnumerable<int> UnavailableForTimeslots { get; set; }
+
+        /// <summary>
+        /// Create an instance of the object based on the supplied data
+        /// </summary>
+        /// <param name="id">The unique Id of the presenter</param>
+        /// <param name="presenterUnavailableForTimeslots">The list of timeslot Ids during which the person cannot present</param>
+        /// <returns>A Presenter object</returns>
+        public static Presenter Create(int id, params int[] presenterUnavailableForTimeslots)
+        {
+            return new Presenter()
+            {
+                Id = id,
+                UnavailableForTimeslots = presenterUnavailableForTimeslots.AsEnumerable()
+            };
+        }
+
     }
 }

@@ -22,11 +22,11 @@ namespace ConferenceScheduler.Optimizer.Test
             session1.AddDependency(session2);
 
             var rooms = new List<Room>();
-            rooms.Add(TestHelper.CreateRoom(1, 10));
+            rooms.Add(Room.Create(1, 10));
 
             var timeslots = new List<Timeslot>();
-            timeslots.Add(TestHelper.CreateTimeslot(1, 10));
-            timeslots.Add(TestHelper.CreateTimeslot(2, 11));
+            timeslots.Add(Timeslot.Create(1, 10));
+            timeslots.Add(Timeslot.Create(2, 11));
 
             var assignments = engine.Process(sessions, rooms, timeslots);
             var session1Assignment = assignments.Where(a => a.SessionId.Value == 1).Single();
@@ -43,11 +43,11 @@ namespace ConferenceScheduler.Optimizer.Test
             session2.AddDependency(session1);
 
             var rooms = new List<Room>();
-            rooms.Add(TestHelper.CreateRoom(1, 10));
+            rooms.Add(Room.Create(1, 10));
 
             var timeslots = new List<Timeslot>();
-            timeslots.Add(TestHelper.CreateTimeslot(1, 10));
-            timeslots.Add(TestHelper.CreateTimeslot(2, 11));
+            timeslots.Add(Timeslot.Create(1, 10));
+            timeslots.Add(Timeslot.Create(2, 11));
 
             var assignments = engine.Process(sessions, rooms, timeslots);
             var session2Assignment = assignments.Where(a => a.SessionId.Value == 2).Single();

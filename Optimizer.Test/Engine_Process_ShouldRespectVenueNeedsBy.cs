@@ -22,12 +22,12 @@ namespace ConferenceScheduler.Optimizer.Test
             sessions.Add(3, 3);
 
             var rooms = new List<Room>();
-            rooms.Add(TestHelper.CreateRoom(1, 10));
-            rooms.Add(TestHelper.CreateRoom(2, 10, 1));
+            rooms.Add(Room.Create(1, 10));
+            rooms.Add(Room.Create(2, 10, 1));
 
             var timeslots = new List<Timeslot>();
-            timeslots.Add(TestHelper.CreateTimeslot(1));
-            timeslots.Add(TestHelper.CreateTimeslot(2));
+            timeslots.Add(Timeslot.Create(1));
+            timeslots.Add(Timeslot.Create(2));
 
             var assignments = engine.Process(sessions, rooms, timeslots);
             var checkAssignment = assignments.Where(a => a.RoomId == 2 && a.TimeslotId == 1).SingleOrDefault();

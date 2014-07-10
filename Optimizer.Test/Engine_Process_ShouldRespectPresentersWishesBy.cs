@@ -19,7 +19,7 @@ namespace ConferenceScheduler.Optimizer.Test
             sessions.Add(1, 1, 1);
 
             var rooms = new List<Room>();
-            rooms.Add(TestHelper.CreateRoom(1, 10));
+            rooms.Add(Room.Create(1, 10));
 
             var timeslots = new List<Timeslot>();
             timeslots.Add(new Timeslot() { Id = 1 });
@@ -37,11 +37,11 @@ namespace ConferenceScheduler.Optimizer.Test
             sessions.Add(2, 2, 2); // Only available for slot 1
 
             var rooms = new List<Room>();
-            rooms.Add(TestHelper.CreateRoom(1, 10));
+            rooms.Add(Room.Create(1, 10));
 
             var timeslots = new List<Timeslot>();
-            timeslots.Add(TestHelper.CreateTimeslot(1));
-            timeslots.Add(TestHelper.CreateTimeslot(2));
+            timeslots.Add(Timeslot.Create(1));
+            timeslots.Add(Timeslot.Create(2));
 
             var assignments = engine.Process(sessions, rooms, timeslots);
             var checkAssignment = assignments.Where(a => a.SessionId == 2).Single();
@@ -59,12 +59,12 @@ namespace ConferenceScheduler.Optimizer.Test
             sessions.Add(3, 3);       // Available for all but must be assigned to slot 2
 
             var rooms = new List<Room>();
-            rooms.Add(TestHelper.CreateRoom(1, 10));
+            rooms.Add(Room.Create(1, 10));
 
             var timeslots = new List<Timeslot>();
-            timeslots.Add(TestHelper.CreateTimeslot(1));
-            timeslots.Add(TestHelper.CreateTimeslot(2));
-            timeslots.Add(TestHelper.CreateTimeslot(3));
+            timeslots.Add(Timeslot.Create(1));
+            timeslots.Add(Timeslot.Create(2));
+            timeslots.Add(Timeslot.Create(3));
 
             var assignments = engine.Process(sessions, rooms, timeslots);
             var checkAssignment = assignments.Where(a => a.SessionId == 3).Single();
@@ -80,8 +80,8 @@ namespace ConferenceScheduler.Optimizer.Test
             sessions.Add(2, 1);
 
             var rooms = new List<Room>();
-            rooms.Add(TestHelper.CreateRoom(1, 10));
-            rooms.Add(TestHelper.CreateRoom(2, 10));
+            rooms.Add(Room.Create(1, 10));
+            rooms.Add(Room.Create(2, 10));
 
             var timeslots = new List<Timeslot>();
             timeslots.Add(new Timeslot() { Id = 1 });
