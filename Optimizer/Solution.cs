@@ -87,9 +87,10 @@ namespace ConferenceScheduler.Optimizer
             return PresenterConstraintsSatisfied() && SessionDependencyConstraintsSatisfied();
         }
 
-        private bool SessionDependencyConstraintsSatisfied()
+        private int SessionDependencyContraintViolationCount()
         {
-            var result = true;
+            int violationCount = 0;
+
             var sessionsWithDependencies = _sessions.Where(s => s.Dependencies != null && s.Dependencies.Count() > 0);
             foreach (var dependentSession in sessionsWithDependencies)
             {
@@ -104,17 +105,24 @@ namespace ConferenceScheduler.Optimizer
                             var dependentTimeslot = _timeslots.Where(t => t.Id == dependentAssignment.TimeslotId).Single();
                             var dependencyTimeslot = _timeslots.Where(t => t.Id == dependencyAssignment.TimeslotId).Single();
                             if (dependencyTimeslot.CompareTo(dependentTimeslot) < 0)
-                                result = false;
+                                violationCount++;
                         }
                     }
                 }
             }
-            return result;
+
+            return violationCount;
         }
 
-        private bool PresenterConstraintsSatisfied()
+        private bool SessionDependencyConstraintsSatisfied()
         {
-            var result = true;
+            return (this.SessionDependencyContraintViolationCount() == 0);
+        }
+
+        private int PresenterConstraintViolationCount()
+        {
+            int violationCount = 0;
+
             foreach (var timeslot in _timeslots)
             {
                 foreach (var presenter in _presenters)
@@ -122,12 +130,18 @@ namespace ConferenceScheduler.Optimizer
                     var sessionsInTimeslot = this.Assignments.GetAssignmentsInTimeslot(timeslot.Id).SelectMany(b => _sessions.Where(c => c.Id == b.SessionId));
                     var presenterSessionCount = sessionsInTimeslot.Count(s => s.Presenters.Select(a => a.Id).Contains(presenter.Id));
                     if (presenterSessionCount > 1) // A presenter can't present in more than one session at a time
-                        result = false;
+                        violationCount++;
                     else if (presenterSessionCount == 1 && presenter.IsUnavailableInTimeslot(timeslot.Id)) // Make sure the presenter is available in the timeslot
-                        result = false;
+                        violationCount++;
                 }
             }
-            return result;
+
+            return violationCount;
+        }
+
+        private bool PresenterConstraintsSatisfied()
+        {
+            return (this.PresenterConstraintViolationCount() == 0);
         }
 
         private void Load(IEnumerable<Session> sessions, IEnumerable<Room> rooms, IEnumerable<Timeslot> timeslots)
