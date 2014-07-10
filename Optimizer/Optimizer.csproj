@@ -44,7 +44,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssignmentCollection.cs" />
+    <Compile Include="AssignmentExtensions.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="PresenterAvailability.cs" />

@@ -19,7 +19,7 @@ namespace ConferenceScheduler.Optimizer
 
         IEnumerable<Presenter> _presenters;
 
-        internal AssignmentCollection Assignments { get; set; }
+        internal ICollection<Assignment> Assignments { get; set; }
 
         internal IEnumerable<Assignment> Results
         {
@@ -29,7 +29,7 @@ namespace ConferenceScheduler.Optimizer
             }
         }
 
-        internal int AssignmentsCompleted { get { return this.Assignments.CompletedAssignmentCount; } }
+        internal int AssignmentsCompleted { get { return this.Assignments.CompletedAssignmentCount(); } }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
         internal bool IsFeasible
@@ -42,7 +42,7 @@ namespace ConferenceScheduler.Optimizer
 
         internal Solution(IEnumerable<Session> sessions, IEnumerable<Room> rooms, IEnumerable<Timeslot> timeslots)
         {
-            this.Assignments = new AssignmentCollection();
+            this.Assignments = new List<Assignment>();
             Validate(sessions, rooms, timeslots);
             Load(sessions, rooms, timeslots);
         }
@@ -135,7 +135,7 @@ namespace ConferenceScheduler.Optimizer
             _sessions = sessions;
             _rooms = rooms;
             _timeslots = timeslots;
-            _presenters = sessions.SelectMany(s => s.Presenters).Distinct();
+            _presenters = sessions.GetPresenters();
 
             // Create the presenter availability matrix
             var presenters = sessions.SelectMany(s => s.Presenters).Distinct();

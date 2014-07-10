@@ -18,5 +18,11 @@ namespace ConferenceScheduler.Optimizer
         {
             return (session.Dependencies != null && session.Dependencies.Count() > 0);
         }
+
+        internal static IEnumerable<Presenter> GetPresenters(this IEnumerable<Session> sessions)
+        {
+            return sessions.SelectMany(s => s.Presenters).Distinct();
+        }
+
     }
 }

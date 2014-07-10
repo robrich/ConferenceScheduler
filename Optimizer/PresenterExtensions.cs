@@ -16,5 +16,6 @@ namespace ConferenceScheduler.Optimizer
                 result = presenter.UnavailableForTimeslots.Contains(timeslotId);
             return result;
         }
+
     }
 }
