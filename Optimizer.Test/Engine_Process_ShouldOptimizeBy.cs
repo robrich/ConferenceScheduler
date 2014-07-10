@@ -26,6 +26,7 @@ namespace ConferenceScheduler.Optimizer.Test
             timeslots.Add(Timeslot.Create(1));
 
             var assignments = engine.Process(sessions, rooms, timeslots);
+            assignments.WriteSchedule();
             Assert.That(assignments.Count(), Is.EqualTo(1), "The wrong number of assignments were returned.");
         }
 
@@ -56,6 +57,7 @@ namespace ConferenceScheduler.Optimizer.Test
 
             var assignments = engine.Process(sessions, rooms, timeslots);
             var assignmentsWithSessions = assignments.Where(a => a.SessionId.HasValue);
+            assignments.WriteSchedule();
             Assert.That(assignmentsWithSessions.Count(), Is.EqualTo(sessions.Count()), "The wrong number of assignments were returned.");
         }
     }

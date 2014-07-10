@@ -32,6 +32,8 @@ namespace ConferenceScheduler.Optimizer.Test
             var assignments = engine.Process(sessions, rooms, timeslots);
             var checkAssignment = assignments.Where(a => a.RoomId == 2 && a.TimeslotId == 1).SingleOrDefault();
 
+            assignments.WriteSchedule();
+
             if (checkAssignment == null)
                 Assert.Null(checkAssignment);
             else

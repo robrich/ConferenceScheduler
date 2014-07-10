@@ -30,6 +30,7 @@ namespace ConferenceScheduler.Optimizer.Test
 
             var assignments = engine.Process(sessions, rooms, timeslots);
             var session1Assignment = assignments.Where(a => a.SessionId.Value == 1).Single();
+            assignments.WriteSchedule();
             Assert.That(session1Assignment.TimeslotId, Is.EqualTo(2), "Session 1 must be assigned to timeslot 2 to satisfy the dependencies.");
         }
 
@@ -51,6 +52,7 @@ namespace ConferenceScheduler.Optimizer.Test
 
             var assignments = engine.Process(sessions, rooms, timeslots);
             var session2Assignment = assignments.Where(a => a.SessionId.Value == 2).Single();
+            assignments.WriteSchedule();
             Assert.That(session2Assignment.TimeslotId, Is.EqualTo(2), "Session 2 must be assigned to timeslot 2 to satisfy the dependencies.");
         }
     }

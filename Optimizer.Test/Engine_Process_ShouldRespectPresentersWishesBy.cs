@@ -45,7 +45,8 @@ namespace ConferenceScheduler.Optimizer.Test
 
             var assignments = engine.Process(sessions, rooms, timeslots);
             var checkAssignment = assignments.Where(a => a.SessionId == 2).Single();
-
+            
+            assignments.WriteSchedule();
             Assert.That(checkAssignment.TimeslotId, Is.EqualTo(1), "Session 2 should have been assigned to slot 1.");
         }
 
@@ -69,6 +70,7 @@ namespace ConferenceScheduler.Optimizer.Test
             var assignments = engine.Process(sessions, rooms, timeslots);
             var checkAssignment = assignments.Where(a => a.SessionId == 3).Single();
 
+            assignments.WriteSchedule();
             Assert.That(checkAssignment.TimeslotId, Is.EqualTo(2), "Session 3 should have been assigned to slot 2.");
         }
 
