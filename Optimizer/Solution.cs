@@ -184,6 +184,9 @@ namespace ConferenceScheduler.Optimizer
 
             if (sessions.Count(s => s.Presenters == null || s.Presenters.Count() < 1) > 0)
                 throw new ArgumentException("Every session must have at least one presenter.");
+
+            if (sessions.HaveCircularDependencies())
+                throw new ArgumentException("Sessions may not have circular dependencies.");
         }
 
     }

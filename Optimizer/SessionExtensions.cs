@@ -57,5 +57,42 @@ namespace ConferenceScheduler.Optimizer
             return sessions.SelectMany(s => s.Presenters).Distinct();
         }
 
+        internal static bool HaveCircularDependencies(this IEnumerable<Session> sessions)
+        {
+            bool result = false;
+            int i = 0;
+            var sessionsArray = sessions.ToArray();
+
+            while (!result && (i < sessions.Count()))
+            {
+                var session = sessionsArray[i];
+                if (session.IsDependentUpon(session.Id))
+                    result = true;
+                i++;
+            }
+
+            return result;
+        }
+
+        private static bool IsDependentUpon(this Session session, int dependencySessionId)
+        {
+            bool result = false;
+            var i = 0;
+
+            if ((session != null) && (session.Dependencies != null))
+            {
+                var dependencyArray = session.Dependencies.ToArray();
+                while (i < session.Dependencies.Count())
+                {
+                    var dependency = dependencyArray[i];
+                    if (dependency.Id == dependencySessionId || dependency.IsDependentUpon(dependencySessionId))
+                        result = true;
+                    i++;
+                }
+            }
+
+            return result;
+        }
+
     }
 }

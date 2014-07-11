@@ -160,31 +160,33 @@ namespace ConferenceScheduler.Optimizer.Test
             var assignments = engine.Process(sessions, rooms, timeslots);
         }
 
-        [Test, ExpectedException(typeof(Exceptions.NoFeasibleSolutionsException))]
-        public void ThrowingNoFeasibleSolutionIfCircularDependenciesExist()
+        [Test, ExpectedException(typeof(ArgumentException))]
+        public void ThrowingArgumentExceptionIfCircularDependenciesExist()
         {
 
-            //var presenter1 = Presenter.Create(1, 2);
+            var presenter1 = Presenter.Create(1, 2);
 
-            //var sessions = new SessionsCollection();
-            
-            //var session1 = sessions.Add(1, 1);
-            //var session2 = sessions.Add(2, 1);
+            var sessions = new SessionsCollection();
 
-            //session1.AddDependency(session2);
-            //session2.AddDependency(session1);
+            var session1 = sessions.Add(1, 1);
+            var session2 = sessions.Add(2, 1);
+            var session3 = sessions.Add(3, 1);
 
-            //var rooms = new List<Room>() { Room.Create(1, 10) };
+            session1.AddDependency(session2);
+            session2.AddDependency(session3);
+            session3.AddDependency(session1);
 
-            //var timeslots = new List<Timeslot>();
-            //timeslots.Add(Timeslot.Create(1));
-            //timeslots.Add(Timeslot.Create(2));
+            var rooms = new List<Room>();
+            rooms.Add(Room.Create(1, 10));
+            rooms.Add(Room.Create(2, 10));
 
-            //Engine engine = new Engine();
-            //var assignments = engine.Process(sessions, rooms, timeslots);
+            var timeslots = new List<Timeslot>();
+            timeslots.Add(Timeslot.Create(1));
+            timeslots.Add(Timeslot.Create(2));
 
-            // TODO: Implement
-            Assert.Inconclusive("Not implemented");
+            Engine engine = new Engine();
+            var assignments = engine.Process(sessions, rooms, timeslots);
+
         }
     }
 }
