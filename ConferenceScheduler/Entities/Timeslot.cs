@@ -75,6 +75,32 @@ namespace ConferenceScheduler.Entities
         /// </summary>
         /// <param name="id">The unique identifier of the timeslot</param>
         /// <param name="startHour">The starting hour of the timeslot</param>
+        /// <returns>An object representing a duration of time during which 
+        /// a conference session can occur</returns>
+        public static Timeslot Create(int id, double startHour)
+        {
+            return Create(id, Convert.ToSingle(startHour), 0);
+        }
+
+        /// <summary>
+        /// Create an instance of the object
+        /// </summary>
+        /// <param name="id">The unique identifier of the timeslot</param>
+        /// <param name="startHour">The starting hour of the timeslot</param>
+        /// <param name="dayIndex">The 0-based index value of the conference day 
+        /// for multi-day conferences</param>
+        /// <returns>An object representing a duration of time during which 
+        /// a conference session can occur</returns>
+        public static Timeslot Create(int id, double startHour, int dayIndex)
+        {
+            return Create(id, Convert.ToSingle(startHour), dayIndex);
+        }
+
+        /// <summary>
+        /// Create an instance of the object
+        /// </summary>
+        /// <param name="id">The unique identifier of the timeslot</param>
+        /// <param name="startHour">The starting hour of the timeslot</param>
         /// <param name="dayIndex">The 0-based index value of the conference day 
         /// for multi-day conferences</param>
         /// <returns>An object representing a duration of time during which 
