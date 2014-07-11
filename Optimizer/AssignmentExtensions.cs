@@ -14,14 +14,14 @@ namespace ConferenceScheduler.Optimizer
             return assignments.Count(a => a.SessionId.HasValue);
         }
 
-        internal static Session GetUnassignedSessionWithFewestAvailableSlots(this IEnumerable<Assignment> assignments, IEnumerable<Session> sessions, PresenterAvailablityCollection presenterMatrix)
+        internal static Session GetUnassignedSessionWithFewestAvailableOptions(this IEnumerable<Assignment> assignments, IEnumerable<Session> sessions, SessionAvailabilityCollection sessionMatrix)
         {
             Session result = null;
             var assignedSessionIds = assignments.Where(a => a.SessionId != null).Select(a => a.SessionId);
             var sessionDictionary = new Dictionary<int, int>();
             foreach (var session in sessions.Where(s => !assignedSessionIds.Contains(s.Id)))
             {
-                sessionDictionary.Add(session.Id, presenterMatrix.GetAvailableTimeslotIds(session.Presenters).Count());
+                sessionDictionary.Add(session.Id, sessionMatrix.GetAvailableAssignmentCount(session.Id));
             }
 
             if (sessionDictionary.Count() > 0)

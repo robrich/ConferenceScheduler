@@ -64,14 +64,14 @@ namespace ConferenceScheduler.Optimizer
 
         internal void AssignMostConstrainedSession()
         {
-            var session = this.Assignments.GetUnassignedSessionWithFewestAvailableSlots(_sessions, _presenterMatrix);
+            var session = this.Assignments.GetUnassignedSessionWithFewestAvailableOptions(_sessions, _sessionMatrix);
             if (session != null)
             {
-                var availableTimeslots = _presenterMatrix.GetAvailableTimeslotIds(session.Presenters);
+                var availableTimeslots = _sessionMatrix.GetAvailableTimeslotIds(session.Id);
                 var unassignedMatrix = this.Assignments.Where(a => a.SessionId == null && availableTimeslots.Contains(a.TimeslotId));
                 var assignment = unassignedMatrix.First();
                 Assign(assignment, session);
-                session = this.Assignments.GetUnassignedSessionWithFewestAvailableSlots(_sessions, _presenterMatrix);
+                session = this.Assignments.GetUnassignedSessionWithFewestAvailableOptions(_sessions, _sessionMatrix);
             }
         }
 
@@ -87,7 +87,7 @@ namespace ConferenceScheduler.Optimizer
             return PresenterConstraintsSatisfied() && SessionDependencyConstraintsSatisfied();
         }
 
-        private int SessionDependencyContraintViolationCount()
+        private int SessionDependencyConstraintViolationCount()
         {
             int violationCount = 0;
 
@@ -104,7 +104,7 @@ namespace ConferenceScheduler.Optimizer
                         {
                             var dependentTimeslot = _timeslots.Where(t => t.Id == dependentAssignment.TimeslotId).Single();
                             var dependencyTimeslot = _timeslots.Where(t => t.Id == dependencyAssignment.TimeslotId).Single();
-                            if (dependencyTimeslot.CompareTo(dependentTimeslot) < 0)
+                            if (dependencyTimeslot.CompareTo(dependentTimeslot) <= 0)
                                 violationCount++;
                         }
                     }
@@ -116,7 +116,7 @@ namespace ConferenceScheduler.Optimizer
 
         private bool SessionDependencyConstraintsSatisfied()
         {
-            return (this.SessionDependencyContraintViolationCount() == 0);
+            return (this.SessionDependencyConstraintViolationCount() == 0);
         }
 
         private int PresenterConstraintViolationCount()

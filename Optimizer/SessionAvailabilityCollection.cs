@@ -24,14 +24,16 @@ namespace ConferenceScheduler.Optimizer
 
         private void Load(IEnumerable<Entities.Session> sessions, IEnumerable<Entities.Room> rooms, IEnumerable<Entities.Timeslot> timeslots)
         {
-            var firstTimeslotId = timeslots.GetFirstTimeslotId();
+            var orderedTimeslots = timeslots.Sort();
+            var lastTimeslotIndex = orderedTimeslots.IndexOf(orderedTimeslots.Last());
+
             foreach (var room in rooms)
                 foreach (var timeslot in timeslots)
                 {
                     if (room.AvailableInTimeslot(timeslot.Id))
                     {
-                        var isFirstTimeslot = timeslot.Id == firstTimeslotId;
-                        this.Add(new SessionAvailability(timeslot.Id, isFirstTimeslot, room.Id, sessions));
+                        var timeslotIndex = orderedTimeslots.IndexOf(timeslot);
+                        this.Add(new SessionAvailability(timeslot.Id, timeslotIndex, lastTimeslotIndex, room.Id, sessions));
                     }
                 }
         }
@@ -49,7 +51,17 @@ namespace ConferenceScheduler.Optimizer
                 item.AvailableSessionIds.Remove(sessionId);
                 if (item.RoomId == assignment.RoomId && item.TimeslotId == assignment.TimeslotId)
                     item.Assigned = true;
-            }  
+            }
+        }
+
+        internal int GetAvailableAssignmentCount(int sessionId)
+        {
+            return this.Count(a => a.AvailableSessionIds.Contains(sessionId));
+        }
+
+        internal IEnumerable<int> GetAvailableTimeslotIds(int sessionId)
+        {
+            return this.Where(a => a.AvailableSessionIds.Contains(sessionId)).Select(s => s.TimeslotId).Distinct();
         }
     }
 }

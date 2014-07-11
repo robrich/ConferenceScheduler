@@ -159,5 +159,32 @@ namespace ConferenceScheduler.Optimizer.Test
             Engine engine = new Engine();
             var assignments = engine.Process(sessions, rooms, timeslots);
         }
+
+        [Test, ExpectedException(typeof(Exceptions.NoFeasibleSolutionsException))]
+        public void ThrowingNoFeasibleSolutionIfCircularDependenciesExist()
+        {
+
+            //var presenter1 = Presenter.Create(1, 2);
+
+            //var sessions = new SessionsCollection();
+            
+            //var session1 = sessions.Add(1, 1);
+            //var session2 = sessions.Add(2, 1);
+
+            //session1.AddDependency(session2);
+            //session2.AddDependency(session1);
+
+            //var rooms = new List<Room>() { Room.Create(1, 10) };
+
+            //var timeslots = new List<Timeslot>();
+            //timeslots.Add(Timeslot.Create(1));
+            //timeslots.Add(Timeslot.Create(2));
+
+            //Engine engine = new Engine();
+            //var assignments = engine.Process(sessions, rooms, timeslots);
+
+            // TODO: Implement
+            Assert.Inconclusive("Not implemented");
+        }
     }
 }

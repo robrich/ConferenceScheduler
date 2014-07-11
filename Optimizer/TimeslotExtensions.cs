@@ -9,9 +9,15 @@ namespace ConferenceScheduler.Optimizer
 {
     internal static class TimeslotExtensions
     {
-        internal static int GetFirstTimeslotId(this IEnumerable<Timeslot> timeslots)
+        internal static int IndexOf(this IEnumerable<Timeslot> timeslots, Timeslot timeslot)
         {
-            return timeslots.OrderBy(x => x).First().Id;
+            return Array.IndexOf(timeslots.ToArray(), timeslot);
         }
+
+        internal static IEnumerable<Timeslot> Sort(this IEnumerable<Timeslot> timeslots)
+        {
+            return timeslots.OrderBy(t => (t.DayIndex * 24.0) + t.StartHour);
+        }
+
     }
 }

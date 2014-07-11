@@ -23,6 +23,7 @@ namespace ConferenceScheduler.Optimizer
             get { return GetFeasibility(); }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         public IEnumerable<int> GetAvailableTimeslotIds(IEnumerable<Presenter> presenters)
         {
             IEnumerable<int> availableSlots = _timeslotIds.ToList();
@@ -31,6 +32,7 @@ namespace ConferenceScheduler.Optimizer
             return availableSlots;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         public IEnumerable<int> GetAvailableTimeslotIds(int presenterId)
         {
             return this.Where(pa => pa.PresenterId == presenterId && pa.IsAvailable).Select(pa => pa.TimeslotId).ToList();

@@ -19,7 +19,12 @@ namespace ConferenceScheduler.Optimizer
 
         internal int AvailableSessionCount { get { return this.AvailableSessionIds.Count(); } }
 
-        internal SessionAvailability(int timeslotId, bool isFirstTimeslot, int roomId, IEnumerable<Session> sessions)
+        internal SessionAvailability(int timeslotId, int timeslotIndex, int lastTimeslotIndex, int roomId, IEnumerable<Session> sessions)
+        {
+            Load(timeslotId, timeslotIndex, lastTimeslotIndex, roomId, sessions);
+        }
+
+        private void Load(int timeslotId, int timeslotIndex, int lastTimeslotIndex, int roomId, IEnumerable<Session> sessions)
         {
             this.TimeslotId = timeslotId;
             this.RoomId = roomId;
@@ -28,10 +33,25 @@ namespace ConferenceScheduler.Optimizer
             this.AvailableSessionIds = sessions.GetSessionIds().ToList();
             foreach (var session in sessions)
             {
-                // A session with dependencies cannot be in the 1st timeslot
-                if (isFirstTimeslot && session.HasDependencies())
-                    this.AvailableSessionIds.Remove(session.Id);
+                var dependencyDepth = session.GetDependencyDepth(sessions);
+                var dependentDepth = session.GetDependentDepth(sessions);
 
+                // A session with dependencies cannot be in any of the 1st n timeslots
+                // where n is the depth of the dependency chain
+                if (timeslotIndex < dependencyDepth)
+                {
+                    this.AvailableSessionIds.Remove(session.Id);
+                }
+
+                // A session that is another session's dependency cannot be in the last n timeslots
+                // where n is the depth of the dependent chain
+                if (timeslotIndex > lastTimeslotIndex - dependentDepth)
+                {
+                    this.AvailableSessionIds.Remove(session.Id);
+                }
+
+                // If the presenter is not available in the timeslot
+                // the session cannot be given in that slot
                 foreach (var presenter in session.Presenters)
                 {
                     if (presenter.IsUnavailableInTimeslot(timeslotId))

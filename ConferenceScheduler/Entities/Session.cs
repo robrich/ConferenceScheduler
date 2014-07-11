@@ -47,5 +47,6 @@ namespace ConferenceScheduler.Entities
         {
             _dependentSessions.Add(session2);
         }
+
     }
 }
