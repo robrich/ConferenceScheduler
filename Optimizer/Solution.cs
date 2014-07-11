@@ -9,7 +9,6 @@ namespace ConferenceScheduler.Optimizer
 {
     internal class Solution
     {
-        PresenterAvailablityCollection _presenterMatrix;
         SessionAvailabilityCollection _sessionMatrix;
 
         IEnumerable<Session> _sessions;
@@ -79,7 +78,6 @@ namespace ConferenceScheduler.Optimizer
         {
             assignment.SessionId = session.Id;
             _sessionMatrix.RemoveAssignedSessions(assignment, session.Id);
-            _presenterMatrix.RemovePresentersFromSlots(assignment, session);
         }
 
         private bool AllConstraintsAreSatisfied()
@@ -151,13 +149,6 @@ namespace ConferenceScheduler.Optimizer
             _timeslots = timeslots;
             _presenters = sessions.GetPresenters();
 
-            // Create the presenter availability matrix
-            var presenters = sessions.SelectMany(s => s.Presenters).Distinct();
-            var timeslotIds = timeslots.Select(ts => ts.Id);
-            _presenterMatrix = new PresenterAvailablityCollection(presenters, timeslotIds);
-            if (!_presenterMatrix.IsFeasible)
-                throw new Exceptions.NoFeasibleSolutionsException();
-
             // Create the session availability matrix
             _sessionMatrix = new SessionAvailabilityCollection(sessions, rooms, timeslots);
             if (!_sessionMatrix.IsFeasible)
@@ -185,9 +176,14 @@ namespace ConferenceScheduler.Optimizer
             if (timeslots == null)
                 throw new ArgumentNullException("timeslots");
 
+            if (timeslots.Count() == 0)
+                throw new ArgumentException("You must have at least one timeslot");
+
+            if (rooms.Count() == 0)
+                throw new ArgumentException("You must have at least one room");
+
             if (sessions.Count(s => s.Presenters == null || s.Presenters.Count() < 1) > 0)
                 throw new ArgumentException("Every session must have at least one presenter.");
-
         }
 
     }

@@ -47,8 +47,6 @@
     <Compile Include="AssignmentExtensions.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="PresenterAvailability.cs" />
-    <Compile Include="PresenterAvailablityCollection.cs" />
     <Compile Include="PresenterExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SessionAvailability.cs" />

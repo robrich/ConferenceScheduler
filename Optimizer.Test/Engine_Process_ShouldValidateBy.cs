@@ -43,8 +43,8 @@ namespace ConferenceScheduler.Optimizer.Test
             var assignments = engine.Process(sessions, rooms, timeslots);
         }
 
-        [Test, ExpectedException(typeof(Exceptions.NoFeasibleSolutionsException))]
-        public void ThrowingNoFeasibleSolutionsExceptionIfNoRoomsSupplied()
+        [Test, ExpectedException(typeof(ArgumentException))]
+        public void ThrowingArgumentExceptionIfNoRoomsSupplied()
         {
             var sessions = new SessionsCollection();
             sessions.Add(1, 1);
@@ -73,8 +73,8 @@ namespace ConferenceScheduler.Optimizer.Test
             var assignments = engine.Process(sessions, rooms, timeslots);
         }
 
-        [Test, ExpectedException(typeof(Exceptions.NoFeasibleSolutionsException))]
-        public void ThrowingNoFeasibleSolutionsExceptionIfNoTimeslotsSupplied()
+        [Test, ExpectedException(typeof(ArgumentException))]
+        public void ThrowingArgumentExceptionIfNoTimeslotsSupplied()
         {
             var sessions = new SessionsCollection();
             sessions.Add(1, 1);
