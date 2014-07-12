@@ -9,6 +9,7 @@ namespace ConferenceScheduler.Optimizer
 {
     internal class SessionAvailabilityCollection : List<SessionAvailability>
     {
+        IEnumerable<Session> _sessions;
         IOrderedEnumerable<Timeslot> _orderedTimeslots;
 
         internal SessionAvailabilityCollection(IEnumerable<Entities.Session> sessions, IEnumerable<Entities.Room> rooms, IEnumerable<Entities.Timeslot> timeslots)
@@ -26,6 +27,7 @@ namespace ConferenceScheduler.Optimizer
 
         private void Load(IEnumerable<Entities.Session> sessions, IEnumerable<Entities.Room> rooms, IEnumerable<Entities.Timeslot> timeslots)
         {
+            _sessions = sessions;
             _orderedTimeslots = timeslots.Sort();
             var lastTimeslotIndex = _orderedTimeslots.IndexOf(_orderedTimeslots.Last());
 
@@ -56,20 +58,36 @@ namespace ConferenceScheduler.Optimizer
                     item.Assigned = true;
             }
 
+            int thisTimeslotIndex = _orderedTimeslots.IndexOf(assignment.TimeslotId);
+
             // If Session has dependencies, eliminate this or earlier timeslots for those sessions
             if (session.HasDependencies())
             {
-                int thisTimeslotIndex = _orderedTimeslots.IndexOf(assignment.TimeslotId);
                 foreach (var dependency in session.Dependencies)
                 {
                     var possibleAssignments = this.Where(i => i.AvailableSessionIds.Contains(dependency.Id));
                     foreach (var possibleAssignment in possibleAssignments)
                     {
-                        if (_orderedTimeslots.IndexOf(possibleAssignment.TimeslotId) <= thisTimeslotIndex)
+                        if (_orderedTimeslots.IndexOf(possibleAssignment.TimeslotId) >= thisTimeslotIndex)
                             possibleAssignment.AvailableSessionIds.Remove(dependency.Id);
                     }
                 }
             }
+
+            // If Session is dependent on other sessions, eliminate this or later timeslots for those sessions
+            if (session.HasDependents(_sessions))
+            {
+                foreach (var dependentSession in session.GetDependents(_sessions))
+                {
+                    var possibleAssignments = this.Where(i => i.AvailableSessionIds.Contains(dependentSession.Id));
+                    foreach (var possibleAssignment in possibleAssignments)
+                    {
+                        if (_orderedTimeslots.IndexOf(possibleAssignment.TimeslotId) <= thisTimeslotIndex)
+                            possibleAssignment.AvailableSessionIds.Remove(dependentSession.Id);
+                    }
+                }
+            }
+
         }
 
         internal int GetAvailableAssignmentCount(int sessionId)

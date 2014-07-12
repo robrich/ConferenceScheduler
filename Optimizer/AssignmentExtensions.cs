@@ -29,7 +29,10 @@ namespace ConferenceScheduler.Optimizer
             {
                 var min = sessionDictionary.Min(s => s.Value);
                 var keys = sessionDictionary.Where(sd => sd.Value == min).Select(a => a.Key);
-                result = sessions.Where(a => keys.Contains(a.Id)).OrderByDescending(b => b.GetDependentDepth(sessions)).ThenByDescending(c => c.GetDependentCount(sessions)).FirstOrDefault();
+                result = sessions.Where(a => keys.Contains(a.Id))
+                    .OrderByDescending(b => b.GetDependentDepth(sessions))
+                    .ThenByDescending(c => c.GetDependentCount(sessions))
+                    .FirstOrDefault();
             }
 
             return result;

@@ -19,6 +19,11 @@ namespace ConferenceScheduler.Optimizer
             return (session.Dependencies != null && session.Dependencies.Count() > 0);
         }
 
+        internal static bool HasDependents(this Session session, IEnumerable<Session> sessions)
+        {
+            return (session.GetDependents(sessions).Count() > 0);
+        }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal static int GetDependencyCount(this Session session)
         {
@@ -55,11 +60,6 @@ namespace ConferenceScheduler.Optimizer
             return result;
         }
 
-
-        internal static bool HasDependents(this Session session, IEnumerable<Session> sessions)
-        {
-            return (session.GetDependents(sessions).Count() > 0);
-        }
 
         internal static IEnumerable<Session> GetDependents(this Session session, IEnumerable<Session> sessions)
         {

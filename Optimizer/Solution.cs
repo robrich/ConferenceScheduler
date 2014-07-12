@@ -12,8 +12,6 @@ namespace ConferenceScheduler.Optimizer
         SessionAvailabilityCollection _sessionMatrix;
 
         IEnumerable<Session> _sessions;
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
-        IEnumerable<Room> _rooms;
         IEnumerable<Timeslot> _timeslots;
 
         IEnumerable<Presenter> _presenters;
@@ -30,7 +28,6 @@ namespace ConferenceScheduler.Optimizer
 
         internal int AssignmentsCompleted { get { return this.Assignments.CompletedAssignmentCount(); } }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
         internal bool IsFeasible
         {
             get
@@ -145,7 +142,6 @@ namespace ConferenceScheduler.Optimizer
         private void Load(IEnumerable<Session> sessions, IEnumerable<Room> rooms, IEnumerable<Timeslot> timeslots)
         {
             _sessions = sessions;
-            _rooms = rooms;
             _timeslots = timeslots;
             _presenters = sessions.GetPresenters();
 
