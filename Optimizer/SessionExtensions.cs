@@ -19,6 +19,20 @@ namespace ConferenceScheduler.Optimizer
             return (session.Dependencies != null && session.Dependencies.Count() > 0);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+        internal static int GetDependencyCount(this Session session)
+        {
+            int result = 0;
+            if (session.Dependencies != null)
+                result = session.Dependencies.Count();
+            return result;
+        }
+
+        internal static int GetDependentCount(this Session session, IEnumerable<Session> sessions)
+        {
+            return sessions.Where(s => s.IsDependentUpon(session.Id)).Count();
+        }
+
         // Returns the depth of the dependency chain. That is, how many sessions
         // this session is dependent upon that are also dependent on other sessions.
         internal static int GetDependencyDepth(this Session session, IEnumerable<Session> sessions)

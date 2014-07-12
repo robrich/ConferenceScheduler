@@ -77,7 +77,7 @@ namespace ConferenceScheduler.Optimizer
         private void Assign(Assignment assignment, Session session)
         {
             assignment.SessionId = session.Id;
-            _sessionMatrix.RemoveAssignedSessions(assignment, session.Id);
+            _sessionMatrix.UpdateConstraints(assignment, session);
         }
 
         private bool AllConstraintsAreSatisfied()

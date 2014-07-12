@@ -18,6 +18,7 @@ namespace ConferenceScheduler.Optimizer
         {
             Session result = null;
             var assignedSessionIds = assignments.Where(a => a.SessionId != null).Select(a => a.SessionId);
+            
             var sessionDictionary = new Dictionary<int, int>();
             foreach (var session in sessions.Where(s => !assignedSessionIds.Contains(s.Id)))
             {
@@ -27,8 +28,8 @@ namespace ConferenceScheduler.Optimizer
             if (sessionDictionary.Count() > 0)
             {
                 var min = sessionDictionary.Min(s => s.Value);
-                var key = sessionDictionary.FirstOrDefault(sd => sd.Value == min).Key;
-                result = sessions.Where(s => s.Id == key).Single();
+                var keys = sessionDictionary.Where(sd => sd.Value == min).Select(a => a.Key);
+                result = sessions.Where(a => keys.Contains(a.Id)).OrderByDescending(b => b.GetDependentDepth(sessions)).ThenByDescending(c => c.GetDependentCount(sessions)).FirstOrDefault();
             }
 
             return result;
