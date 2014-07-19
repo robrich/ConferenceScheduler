@@ -113,5 +113,36 @@ namespace ConferenceScheduler.Optimizer.Test
             Assert.That(s2TimeslotId, Is.Not.EqualTo(s4TimeslotId), "Sessions with the same TopicId should not be in the same timeslot.");
         }
 
+        [Test]
+        public void SeparatingSessionsInTheSameTrackIntoDifferentTimslots_6Sessions3Tracks()
+        {
+            Engine engine = new Engine();
+            var sessions = new SessionsCollection();
+            sessions.Add(1, 1, Presenter.Create(1));
+            sessions.Add(2, 2, Presenter.Create(2));
+            sessions.Add(3, 1, Presenter.Create(3));
+            sessions.Add(4, 1, Presenter.Create(4));
+            sessions.Add(5, null, Presenter.Create(5));
+            sessions.Add(6, 3, Presenter.Create(6));
+
+            var rooms = new List<Room>();
+            rooms.Add(Room.Create(1, 10));
+            rooms.Add(Room.Create(2, 10));
+
+            var timeslots = new List<Timeslot>();
+            timeslots.Add(Timeslot.Create(1, 9.0));
+            timeslots.Add(Timeslot.Create(2, 10.25));
+            timeslots.Add(Timeslot.Create(3, 11.5));
+
+            var assignments = engine.Process(sessions, rooms, timeslots);
+            assignments.WriteSchedule();
+
+            var s1TimeslotId = assignments.Where(a => a.SessionId == 1).Single().TimeslotId;
+            var s3TimeslotId = assignments.Where(a => a.SessionId == 3).Single().TimeslotId;
+            var s4TimeslotId = assignments.Where(a => a.SessionId == 4).Single().TimeslotId;
+            var slotsAreEqual = ((s1TimeslotId == s3TimeslotId) || (s1TimeslotId == s4TimeslotId) || (s3TimeslotId == s4TimeslotId));
+
+            Assert.False(slotsAreEqual, "Sessions with the same TopicId should not be in the same timeslot.");
+        }
     }
 }
