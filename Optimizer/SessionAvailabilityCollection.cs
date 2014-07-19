@@ -37,7 +37,7 @@ namespace ConferenceScheduler.Optimizer
                     if (room.AvailableInTimeslot(timeslot.Id))
                     {
                         var timeslotIndex = _orderedTimeslots.IndexOf(timeslot);
-                        this.Add(new SessionAvailability(timeslot.Id, timeslotIndex, lastTimeslotIndex, room.Id, sessions));
+                        this.Add(new SessionAvailability(timeslot.Id, timeslotIndex, lastTimeslotIndex, room.Id, rooms.Count(), sessions));
                     }
                 }
         }

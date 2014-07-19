@@ -19,12 +19,12 @@ namespace ConferenceScheduler.Optimizer
 
         internal int AvailableSessionCount { get { return this.AvailableSessionIds.Count(); } }
 
-        internal SessionAvailability(int timeslotId, int timeslotIndex, int lastTimeslotIndex, int roomId, IEnumerable<Session> sessions)
+        internal SessionAvailability(int timeslotId, int timeslotIndex, int lastTimeslotIndex, int roomId, int roomCount, IEnumerable<Session> sessions)
         {
-            Load(timeslotId, timeslotIndex, lastTimeslotIndex, roomId, sessions);
+            Load(timeslotId, timeslotIndex, lastTimeslotIndex, roomId, roomCount, sessions);
         }
 
-        private void Load(int timeslotId, int timeslotIndex, int lastTimeslotIndex, int roomId, IEnumerable<Session> sessions)
+        private void Load(int timeslotId, int timeslotIndex, int lastTimeslotIndex, int roomId, int roomCount, IEnumerable<Session> sessions)
         {
             this.TimeslotId = timeslotId;
             this.RoomId = roomId;
@@ -33,7 +33,7 @@ namespace ConferenceScheduler.Optimizer
             this.AvailableSessionIds = sessions.GetSessionIds().ToList();
             foreach (var session in sessions)
             {
-                var dependencyDepth = session.GetDependencyDepth(sessions);
+                var dependencyDepth = session.GetDependencyDepth(sessions, roomCount);
                 var dependentDepth = session.GetDependentDepth(sessions);
 
                 // A session with dependencies cannot be in any of the 1st n timeslots

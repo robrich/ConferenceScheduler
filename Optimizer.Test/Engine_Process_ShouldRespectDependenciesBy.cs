@@ -121,6 +121,39 @@ namespace ConferenceScheduler.Optimizer.Test
         }
 
         [Test]
+        public void FindingTheOnlyValidTimeslotForASessionWithMoreDependenciesThenRooms()
+        {
+            Engine engine = new Engine();
+            var sessions = new SessionsCollection();
+
+            var session1 = sessions.Add(1, 1);
+            var session2 = sessions.Add(2, 3);
+            var session3 = sessions.Add(3, 1);
+            var session4 = sessions.Add(4, 2);
+            var session5 = sessions.Add(5, 2);
+            var session6 = sessions.Add(6, 2);
+
+            session4.AddDependency(session6);
+            session4.AddDependency(session5);
+            session4.AddDependency(session1);
+            session4.AddDependency(session2);
+
+            var rooms = new List<Room>();
+            rooms.Add(Room.Create(1));
+            rooms.Add(Room.Create(2));
+
+            var timeslots = new List<Timeslot>();
+            timeslots.Add(Timeslot.Create(1, 8.5));
+            timeslots.Add(Timeslot.Create(2, 9.75));
+            timeslots.Add(Timeslot.Create(3, 11.0));
+
+            var assignments = engine.Process(sessions, rooms, timeslots);
+            assignments.WriteSchedule();
+            var testAssignment = assignments.Single(a => a.SessionId == 4);
+            Assert.That(testAssignment.TimeslotId, Is.EqualTo(3), "Session 4 must be in the 3rd timeslot");
+        }
+
+        [Test]
         public void AssigningAllDependenciesOfASessionPriorToThatSession()
         {
             Engine engine = new Engine();

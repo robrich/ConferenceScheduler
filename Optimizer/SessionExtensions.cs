@@ -40,12 +40,18 @@ namespace ConferenceScheduler.Optimizer
 
         // Returns the depth of the dependency chain. That is, how many sessions
         // this session is dependent upon that are also dependent on other sessions.
-        internal static int GetDependencyDepth(this Session session, IEnumerable<Session> sessions)
+        internal static int GetDependencyDepth(this Session session, IEnumerable<Session> sessions, int roomCount)
         {
             int result = 0;
             if (session.HasDependencies())
                 foreach (var dependency in session.Dependencies)
-                    result = System.Math.Max(result, dependency.GetDependencyDepth(sessions) + 1);
+                    result = System.Math.Max(result, dependency.GetDependencyDepth(sessions, roomCount) + 1);
+
+            double dependencyCountF = Convert.ToDouble(session.GetDependencyCount());
+            double roomCountF = Convert.ToDouble(roomCount);
+            int timeslotsPerDependency = Convert.ToInt32(System.Math.Ceiling(dependencyCountF / roomCountF));
+            result = System.Math.Max(result, timeslotsPerDependency);
+
             return result;
         }
 
