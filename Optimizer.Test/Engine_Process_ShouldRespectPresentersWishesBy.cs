@@ -16,7 +16,7 @@ namespace ConferenceScheduler.Optimizer.Test
         public void ThrowingNoFeasibleSolutionIfSpeakerIsUnavailableForAllTimeslots()
         {
             var sessions = new SessionsCollection();
-            sessions.Add(1, 1, 1);
+            sessions.Add(1, null, Presenter.Create(1, 1));
 
             var rooms = new List<Room>();
             rooms.Add(Room.Create(1, 10));
@@ -33,8 +33,8 @@ namespace ConferenceScheduler.Optimizer.Test
         {
             Engine engine = new Engine();
             var sessions = new SessionsCollection();
-            sessions.Add(1, 1);
-            sessions.Add(2, 2, 2); // Only available for slot 1
+            sessions.Add(1, null, Presenter.Create(1));
+            sessions.Add(2, null, Presenter.Create(2, 2)); // Only available for slot 1
 
             var rooms = new List<Room>();
             rooms.Add(Room.Create(1, 10));
@@ -45,7 +45,7 @@ namespace ConferenceScheduler.Optimizer.Test
 
             var assignments = engine.Process(sessions, rooms, timeslots);
             var checkAssignment = assignments.Where(a => a.SessionId == 2).Single();
-            
+
             assignments.WriteSchedule();
             Assert.That(checkAssignment.TimeslotId, Is.EqualTo(1), "Session 2 should have been assigned to slot 1.");
         }
@@ -55,9 +55,9 @@ namespace ConferenceScheduler.Optimizer.Test
         {
             Engine engine = new Engine();
             var sessions = new SessionsCollection();
-            sessions.Add(1, 1, 2);    // Not available for slot 2
-            sessions.Add(2, 2, 2);    // Not available for slot 2
-            sessions.Add(3, 3);       // Available for all but must be assigned to slot 2
+            sessions.Add(1, null, Presenter.Create(1, 2));    // Not available for slot 2
+            sessions.Add(2, null, Presenter.Create(2, 2));    // Not available for slot 2
+            sessions.Add(3, null, Presenter.Create(3));       // Available for all but must be assigned to slot 2
 
             var rooms = new List<Room>();
             rooms.Add(Room.Create(1, 10));
@@ -78,8 +78,8 @@ namespace ConferenceScheduler.Optimizer.Test
         public void ThrowingNoFeasibleSolutionIfSpeakerWouldHaveToBeInTwoPlacesAtOnce()
         {
             var sessions = new SessionsCollection();
-            sessions.Add(1, 1);
-            sessions.Add(2, 1);
+            sessions.Add(1, null, Presenter.Create(1));
+            sessions.Add(2, null, Presenter.Create(1));
 
             var rooms = new List<Room>();
             rooms.Add(Room.Create(1, 10));

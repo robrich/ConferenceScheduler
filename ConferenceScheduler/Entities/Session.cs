@@ -18,6 +18,11 @@ namespace ConferenceScheduler.Entities
         public int Id { get; set; }
 
         /// <summary>
+        /// The primary-key identifier of the Topic (Track) of the session
+        /// </summary>
+        public int? TopicId { get; set; }
+
+        /// <summary>
         /// Contains the list of presenters for the session
         /// </summary>
         public IEnumerable<Presenter> Presenters { get; set; }

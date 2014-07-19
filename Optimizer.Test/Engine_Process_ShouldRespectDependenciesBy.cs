@@ -17,8 +17,8 @@ namespace ConferenceScheduler.Optimizer.Test
         {
             Engine engine = new Engine();
             var sessions = new SessionsCollection();
-            var session1 = sessions.Add(1, 1);
-            var session2 = sessions.Add(2, 1);
+            var session1 = sessions.Add(1, null, Presenter.Create(1));
+            var session2 = sessions.Add(2, null, Presenter.Create(1));
             session1.AddDependency(session2);
 
             var rooms = new List<Room>();
@@ -39,8 +39,8 @@ namespace ConferenceScheduler.Optimizer.Test
         {
             Engine engine = new Engine();
             var sessions = new SessionsCollection();
-            var session1 = sessions.Add(1, 1);
-            var session2 = sessions.Add(2, 1);
+            var session1 = sessions.Add(1, null, Presenter.Create(1));
+            var session2 = sessions.Add(2, null, Presenter.Create(1));
             session2.AddDependency(session1);
 
             var rooms = new List<Room>();
@@ -62,12 +62,12 @@ namespace ConferenceScheduler.Optimizer.Test
             Engine engine = new Engine();
             var sessions = new SessionsCollection();
 
-            var session1 = sessions.Add(1, 1);
-            var session2 = sessions.Add(2, 3);
-            var session3 = sessions.Add(3, 1);
-            var session4 = sessions.Add(4, 2);
-            var session5 = sessions.Add(5, 2);
-            var session6 = sessions.Add(6, 2);
+            var session1 = sessions.Add(1, null, Presenter.Create(1));
+            var session2 = sessions.Add(2, null, Presenter.Create(3));
+            var session3 = sessions.Add(3, null, Presenter.Create(1));
+            var session4 = sessions.Add(4, null, Presenter.Create(2));
+            var session5 = sessions.Add(5, null, Presenter.Create(2));
+            var session6 = sessions.Add(6, null, Presenter.Create(2));
 
             session5.AddDependency(session6);
             session4.AddDependency(session5);
@@ -93,12 +93,12 @@ namespace ConferenceScheduler.Optimizer.Test
             Engine engine = new Engine();
             var sessions = new SessionsCollection();
 
-            var session1 = sessions.Add(1, 1);
-            var session2 = sessions.Add(2, 3);
-            var session3 = sessions.Add(3, 1);
-            var session4 = sessions.Add(4, 2);
-            var session5 = sessions.Add(5, 2);
-            var session6 = sessions.Add(6, 2);
+            var session1 = sessions.Add(1, null, Presenter.Create(1));
+            var session2 = sessions.Add(2, null, Presenter.Create(3));
+            var session3 = sessions.Add(3, null, Presenter.Create(1));
+            var session4 = sessions.Add(4, null, Presenter.Create(2));
+            var session5 = sessions.Add(5, null, Presenter.Create(2));
+            var session6 = sessions.Add(6, null, Presenter.Create(2));
 
             session4.AddDependency(session6);
             session4.AddDependency(session5);
@@ -126,12 +126,12 @@ namespace ConferenceScheduler.Optimizer.Test
             Engine engine = new Engine();
             var sessions = new SessionsCollection();
 
-            var session1 = sessions.Add(1, 1);
-            var session2 = sessions.Add(2, 3);
-            var session3 = sessions.Add(3, 1);
-            var session4 = sessions.Add(4, 2);
-            var session5 = sessions.Add(5, 2);
-            var session6 = sessions.Add(6, 2);
+            var session1 = sessions.Add(1, null, Presenter.Create(1));
+            var session2 = sessions.Add(2, null, Presenter.Create(3));
+            var session3 = sessions.Add(3, null, Presenter.Create(1));
+            var session4 = sessions.Add(4, null, Presenter.Create(2));
+            var session5 = sessions.Add(5, null, Presenter.Create(2));
+            var session6 = sessions.Add(6, null, Presenter.Create(2));
 
             session4.AddDependency(session6);
             session4.AddDependency(session5);
@@ -159,12 +159,12 @@ namespace ConferenceScheduler.Optimizer.Test
             Engine engine = new Engine();
             var sessions = new SessionsCollection();
 
-            var session1 = sessions.Add(1, 1);
-            var session2 = sessions.Add(2, 3);
-            var session3 = sessions.Add(3, 1);
-            var session4 = sessions.Add(4, 2);
-            var session5 = sessions.Add(5, 2);
-            var session6 = sessions.Add(6, 2);
+            var session1 = sessions.Add(1, null, Presenter.Create(1));
+            var session2 = sessions.Add(2, null, Presenter.Create(3));
+            var session3 = sessions.Add(3, null, Presenter.Create(1));
+            var session4 = sessions.Add(4, null, Presenter.Create(2));
+            var session5 = sessions.Add(5, null, Presenter.Create(2));
+            var session6 = sessions.Add(6, null, Presenter.Create(2));
 
             session4.AddDependency(session6);
             session4.AddDependency(session5);

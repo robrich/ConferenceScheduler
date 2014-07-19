@@ -108,8 +108,8 @@ namespace ConferenceScheduler.Optimizer.Test
         {
             Engine engine = new Engine();
             var sessions = new SessionsCollection();
-            sessions.Add(1, 1);
-            sessions.Add(2, 2);
+            sessions.Add(1, null, Presenter.Create(1));
+            sessions.Add(2, null, Presenter.Create(2));
 
             var rooms = new List<Room>();
             rooms.Add(Room.Create(1, 10));
@@ -148,7 +148,7 @@ namespace ConferenceScheduler.Optimizer.Test
             var presenter2 = Presenter.Create(2, 1);
 
             var sessions = new SessionsCollection();
-            sessions.Add(1, presenter1, presenter2);
+            sessions.Add(1, null, presenter1, presenter2);
 
             var rooms = new List<Room>() { Room.Create(1, 10) };
 

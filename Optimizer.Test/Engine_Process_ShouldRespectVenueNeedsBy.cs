@@ -17,9 +17,9 @@ namespace ConferenceScheduler.Optimizer.Test
         {
             Engine engine = new Engine();
             var sessions = new SessionsCollection();
-            sessions.Add(1, 1);
-            sessions.Add(2, 2);
-            sessions.Add(3, 3);
+            sessions.Add(1, null, Presenter.Create(1));
+            sessions.Add(2, null, Presenter.Create(2));
+            sessions.Add(3, null, Presenter.Create(3));
 
             var rooms = new List<Room>();
             rooms.Add(Room.Create(1, 10));
