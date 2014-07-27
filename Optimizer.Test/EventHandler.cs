@@ -11,8 +11,9 @@ namespace ConferenceScheduler.Optimizer.Test
     {
         public IEnumerable<Assignment> Assignments { get; private set; }
 
-        public void EngineUpdateEventHandler(IEnumerable<Assignment> assignments)
+        public void EngineUpdateEventHandler(ProcessUpdateEventArgs args)
         {
+            var assignments = args.Assignments;
             this.Assignments = assignments;
             this.Assignments.WriteSchedule();
         }

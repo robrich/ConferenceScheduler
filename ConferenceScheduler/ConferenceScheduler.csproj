@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="Entities\Assignment.cs" />
     <Compile Include="Entities\Presenter.cs" />
+    <Compile Include="Entities\ProcessUpdateEventArgs.cs" />
     <Compile Include="Entities\Room.cs" />
     <Compile Include="Entities\Session.cs" />
     <Compile Include="Entities\SessionsCollection.cs" />

@@ -11,7 +11,7 @@ namespace ConferenceScheduler.Optimizer
     /// </summary>
     public class Engine
     {
-        Action<IEnumerable<Assignment>> _updateEventHandler;
+        Action<ProcessUpdateEventArgs> _updateEventHandler;
 
         /// <summary>
         /// Create an instance of the object
@@ -22,8 +22,7 @@ namespace ConferenceScheduler.Optimizer
         /// Create an instance of the object
         /// </summary>
         /// <param name="updateEventHandler">A method to call to handle an update event.</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
-        public Engine(Action<IEnumerable<Assignment>> updateEventHandler)
+        public Engine(Action<ProcessUpdateEventArgs> updateEventHandler)
         {
             _updateEventHandler = updateEventHandler;
         }
@@ -79,7 +78,10 @@ namespace ConferenceScheduler.Optimizer
         private void RaiseUpdateEvent(Solution solution)
         {
             if (_updateEventHandler != null)
-                _updateEventHandler.Invoke(solution.Assignments);
+            {
+                var args = new ProcessUpdateEventArgs() { Assignments = solution.Assignments.ToList() };
+                _updateEventHandler.Invoke(args);
+            }
         }
 
     }
