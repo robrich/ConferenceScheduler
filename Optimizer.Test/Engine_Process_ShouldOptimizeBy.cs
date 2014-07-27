@@ -15,7 +15,6 @@ namespace ConferenceScheduler.Optimizer.Test
         [Test]
         public void ReturningTheOnlyPossibleAssignmentIfOneSessionRoomAndSlotAreSupplied()
         {
-            Engine engine = new Engine();
             var sessions = new SessionsCollection();
             sessions.Add(1, null, Presenter.Create(1));
 
@@ -25,6 +24,8 @@ namespace ConferenceScheduler.Optimizer.Test
             var timeslots = new List<Timeslot>();
             timeslots.Add(Timeslot.Create(1));
 
+            var eventHandlers = new EventHandler();
+            Engine engine = new Engine(eventHandlers.EngineUpdateEventHandler);
             var assignments = engine.Process(sessions, rooms, timeslots);
             assignments.WriteSchedule();
             Assert.That(assignments.Count(), Is.EqualTo(1), "The wrong number of assignments were returned.");
@@ -33,7 +34,6 @@ namespace ConferenceScheduler.Optimizer.Test
         [Test]
         public void AssigningAllSessions()
         {
-            Engine engine = new Engine();
             var sessions = new SessionsCollection();
             sessions.Add(1, null, Presenter.Create(1));
             sessions.Add(2, null, Presenter.Create(2));
@@ -55,6 +55,8 @@ namespace ConferenceScheduler.Optimizer.Test
             timeslots.Add(Timeslot.Create(4));
             timeslots.Add(Timeslot.Create(5));
 
+            var eventHandlers = new EventHandler();
+            Engine engine = new Engine(eventHandlers.EngineUpdateEventHandler);
             var assignments = engine.Process(sessions, rooms, timeslots);
             var assignmentsWithSessions = assignments.Where(a => a.SessionId.HasValue);
             assignments.WriteSchedule();
@@ -64,7 +66,6 @@ namespace ConferenceScheduler.Optimizer.Test
         [Test]
         public void SeparatingSessionsInTheSameTrackIntoDifferentTimslots_4Sessions3Tracks()
         {
-            Engine engine = new Engine();
             var sessions = new SessionsCollection();
             sessions.Add(1, 1, Presenter.Create(1));
             sessions.Add(2, 2, Presenter.Create(2));
@@ -79,6 +80,8 @@ namespace ConferenceScheduler.Optimizer.Test
             timeslots.Add(Timeslot.Create(1, 9.0));
             timeslots.Add(Timeslot.Create(2, 10.25));
 
+            var eventHandlers = new EventHandler();
+            Engine engine = new Engine(eventHandlers.EngineUpdateEventHandler);
             var assignments = engine.Process(sessions, rooms, timeslots);
             assignments.WriteSchedule();
 
@@ -90,7 +93,6 @@ namespace ConferenceScheduler.Optimizer.Test
         [Test]
         public void SeparatingSessionsInTheSameTrackIntoDifferentTimslots_4Sessions1Track()
         {
-            Engine engine = new Engine();
             var sessions = new SessionsCollection();
             sessions.Add(1, null, Presenter.Create(1));
             sessions.Add(2, 1, Presenter.Create(2));
@@ -105,6 +107,8 @@ namespace ConferenceScheduler.Optimizer.Test
             timeslots.Add(Timeslot.Create(1, 9.0));
             timeslots.Add(Timeslot.Create(2, 10.25));
 
+            var eventHandlers = new EventHandler();
+            Engine engine = new Engine(eventHandlers.EngineUpdateEventHandler);
             var assignments = engine.Process(sessions, rooms, timeslots);
             assignments.WriteSchedule();
 

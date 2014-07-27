@@ -17,6 +17,11 @@ namespace ConferenceScheduler.Optimizer
             Load(sessions, rooms, timeslots);
         }
 
+        internal SessionAvailabilityCollection(SessionAvailabilityCollection sac)
+        {
+            Load(sac);
+        }
+
         internal bool IsFeasible
         {
             get
@@ -40,6 +45,14 @@ namespace ConferenceScheduler.Optimizer
                         this.Add(new SessionAvailability(timeslot.Id, timeslotIndex, lastTimeslotIndex, room.Id, rooms.Count(), sessions));
                     }
                 }
+        }
+
+        private void Load(SessionAvailabilityCollection sac)
+        {
+            _sessions = sac._sessions.ToList();
+            IEnumerable<Timeslot> ts = sac._orderedTimeslots.ToList();
+            _orderedTimeslots = ts.Sort();
+            this.AddRange(sac.ToList());
         }
 
         internal IEnumerable<SessionAvailability> GetUnassignedItemsWithOnlyOneOption()
@@ -98,6 +111,11 @@ namespace ConferenceScheduler.Optimizer
         internal IEnumerable<int> GetAvailableTimeslotIds(int sessionId)
         {
             return this.Where(a => a.AvailableSessionIds.Contains(sessionId)).Select(s => s.TimeslotId).Distinct();
+        }
+
+        internal SessionAvailabilityCollection Clone()
+        {
+            return new SessionAvailabilityCollection(this);
         }
     }
 }

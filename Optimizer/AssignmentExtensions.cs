@@ -53,5 +53,27 @@ namespace ConferenceScheduler.Optimizer
             return assignments.Where(a => a.TimeslotId == timeslotId && a.SessionId.HasValue);
         }
 
+        internal static Assignment GetRandom(this IEnumerable<Assignment> assignments, params int[] excludeSessionIds)
+        {
+            // Sorts in random order
+            return assignments.Where(a => a.SessionId.HasValue && !excludeSessionIds.Contains(a.SessionId.Value)).OrderBy(a => Guid.NewGuid().ToString()).First();
+        }
+
+        internal static ICollection<Assignment> Clone(this IEnumerable<Assignment> assignments)
+        {
+            var result = new List<Assignment>();
+            result.AddRange(assignments.Select(a => a.Clone()));
+            return result;
+        }
+
+        internal static Assignment Clone(this Assignment assignment)
+        {
+            Assignment result;
+            if (assignment.SessionId.HasValue)
+                result = new Assignment(assignment.RoomId, assignment.TimeslotId, assignment.SessionId.Value);
+            else
+                result = new Assignment(assignment.RoomId, assignment.TimeslotId);
+            return result;
+        }
     }
 }

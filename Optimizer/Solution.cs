@@ -12,6 +12,7 @@ namespace ConferenceScheduler.Optimizer
         SessionAvailabilityCollection _sessionMatrix;
 
         IEnumerable<Session> _sessions;
+        IEnumerable<Room> _rooms;
         IEnumerable<Timeslot> _timeslots;
 
         IEnumerable<Presenter> _presenters;
@@ -43,9 +44,15 @@ namespace ConferenceScheduler.Optimizer
             Load(sessions, rooms, timeslots);
         }
 
-        internal void AssignSessionsWithOnlyOneOption()
+        internal Solution(Solution solution)
+        {
+            Load(solution);
+        }
+
+        internal int AssignSessionsWithOnlyOneOption()
         {
             // If any room-timeslot combinations only have 1 session available, assign them
+            int changeCount = 0;
             var itemsWithOneOption = _sessionMatrix.GetUnassignedItemsWithOnlyOneOption();
             while (itemsWithOneOption.Count() > 0)
             {
@@ -54,12 +61,15 @@ namespace ConferenceScheduler.Optimizer
                 var assignment = this.Assignments.GetAssignment(item.RoomId, item.TimeslotId);
                 var sessionToAssign = _sessions.Where(s => s.Id == sessionId).Single();
                 Assign(assignment, sessionToAssign);
+                changeCount++;
                 itemsWithOneOption = _sessionMatrix.GetUnassignedItemsWithOnlyOneOption();
             }
+            return changeCount;
         }
 
-        internal void AssignMostConstrainedSession()
+        internal int AssignMostConstrainedSession()
         {
+            int changeCount = 0;
             var session = this.Assignments.GetUnassignedSessionWithFewestAvailableOptions(_sessions, _sessionMatrix);
             if (session != null)
             {
@@ -67,8 +77,10 @@ namespace ConferenceScheduler.Optimizer
                 var unassignedMatrix = this.Assignments.Where(a => a.SessionId == null && availableTimeslots.Contains(a.TimeslotId));
                 var assignment = unassignedMatrix.First();
                 Assign(assignment, session);
+                changeCount++;
                 session = this.Assignments.GetUnassignedSessionWithFewestAvailableOptions(_sessions, _sessionMatrix);
             }
+            return changeCount;
         }
 
         private void Assign(Assignment assignment, Session session)
@@ -139,9 +151,41 @@ namespace ConferenceScheduler.Optimizer
             return (this.PresenterConstraintViolationCount() == 0);
         }
 
+        internal int GetScore()
+        {
+            int result = 0;
+
+            foreach (var timeslot in _timeslots)
+            {
+                result += timeslot.GetTopicScore(this.Assignments, _sessions);
+            }
+
+            return result;
+        }
+
+        internal Solution SwapAssignments()
+        {
+            var newSolution = this.Clone();
+            if (newSolution.Assignments.Count() > 1)
+            {
+                var a1 = newSolution.Assignments.GetRandom();
+                var a2 = newSolution.Assignments.GetRandom(a1.SessionId.Value);
+                var temp = a2.SessionId;
+                a2.SessionId = a1.SessionId;
+                a1.SessionId = temp;
+            }
+            return newSolution;
+        }
+
+        private Solution Clone()
+        {
+            return new Solution(this);
+        }
+
         private void Load(IEnumerable<Session> sessions, IEnumerable<Room> rooms, IEnumerable<Timeslot> timeslots)
         {
             _sessions = sessions;
+            _rooms = rooms;
             _timeslots = timeslots;
             _presenters = sessions.GetPresenters();
 
@@ -159,6 +203,16 @@ namespace ConferenceScheduler.Optimizer
             // Make sure there are enough slots/rooms for all of the sessions
             if (sessions.Count() > this.Assignments.Count())
                 throw new Exceptions.NoFeasibleSolutionsException("There are not enough rooms and timeslots to accommodate all of the sessions.");
+        }
+
+        private void Load(Solution solution)
+        {
+            _sessions = solution._sessions.ToList();
+            _rooms = solution._rooms.ToList();
+            _timeslots = solution._timeslots.ToList();
+            _presenters = solution._presenters.ToList();
+            _sessionMatrix = solution._sessionMatrix.Clone();
+            this.Assignments = solution.Assignments.Clone();
         }
 
         private static void Validate(IEnumerable<Session> sessions, IEnumerable<Room> rooms, IEnumerable<Timeslot> timeslots)

@@ -11,10 +11,22 @@ namespace ConferenceScheduler.Optimizer
     /// </summary>
     public class Engine
     {
+        Action<IEnumerable<Assignment>> _updateEventHandler;
+
         /// <summary>
         /// Create an instance of the object
         /// </summary>
-        public Engine() { }
+        public Engine() : this(null) { }
+
+        /// <summary>
+        /// Create an instance of the object
+        /// </summary>
+        /// <param name="updateEventHandler">A method to call to handle an update event.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
+        public Engine(Action<IEnumerable<Assignment>> updateEventHandler)
+        {
+            _updateEventHandler = updateEventHandler;
+        }
 
         /// <summary>
         /// Returns an optimized conference schedule based on the inputs.
@@ -23,21 +35,51 @@ namespace ConferenceScheduler.Optimizer
         /// <param name="rooms">A list of rooms that sessions can be held in along with their associated attributes.</param>
         /// <param name="timeslots">A list of time slots during which sessions can be delivered.</param>
         /// <returns>A collection of assignments representing the room and timeslot in which each session will be delivered.</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
         public IEnumerable<Assignment> Process(IEnumerable<Session> sessions, IEnumerable<Room> rooms, IEnumerable<Timeslot> timeslots)
         {
             var solution = new Solution(sessions, rooms, timeslots);
 
             while (solution.AssignmentsCompleted < sessions.Count())
             {
-                solution.AssignSessionsWithOnlyOneOption();
-                solution.AssignMostConstrainedSession();
+                if (solution.AssignSessionsWithOnlyOneOption() > 0)
+                    RaiseUpdateEvent(solution);
+
+                if (solution.AssignMostConstrainedSession() > 0)
+                    RaiseUpdateEvent(solution);
             }
 
-            if (!solution.IsFeasible)
+            var bestSolution = solution;
+            var bestScore = bestSolution.GetScore();
+
+            if (!bestSolution.IsFeasible)
                 throw new Exceptions.NoFeasibleSolutionsException();
             else
-                return solution.Results;
+            {
+                var maxAttempts = Convert.ToInt32(System.Math.Pow(2.0, Convert.ToDouble(solution.Assignments.Count() - 1)));
+                var attemptCount = 0;
+
+                do
+                {
+                    // Try to improve the score
+                    solution = bestSolution.SwapAssignments();
+                    attemptCount++;
+                    var currentScore = solution.GetScore();
+                    if ((solution.IsFeasible) && (currentScore < bestScore))
+                    {
+                        bestSolution = solution;
+                        RaiseUpdateEvent(bestSolution);
+                    }
+                } while (attemptCount < maxAttempts);
+
+            }
+
+            return bestSolution.Results;
+        }
+
+        private void RaiseUpdateEvent(Solution solution)
+        {
+            if (_updateEventHandler != null)
+                _updateEventHandler.Invoke(solution.Assignments);
         }
 
     }

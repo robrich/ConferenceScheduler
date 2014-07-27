@@ -46,6 +46,7 @@
     <Compile Include="Engine_Process_ShouldRespectVenueNeedsBy.cs" />
     <Compile Include="Engine_Process_ShouldValidateBy.cs" />
     <Compile Include="Engine_Process_ShouldRespectPresentersWishesBy.cs" />
+    <Compile Include="EventHandler.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

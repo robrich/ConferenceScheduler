@@ -25,5 +25,24 @@ namespace ConferenceScheduler.Optimizer
             return timeslots.OrderBy(t => (t.DayIndex * 24.0) + t.StartHour);
         }
 
+        internal static int GetTopicScore(this Timeslot timeslot, IEnumerable<Assignment> assignments, IEnumerable<Session> sessions)
+        {
+            var result = 0;
+            var assignmentsForSlot = assignments.Where(a => a.TimeslotId == timeslot.Id && a.SessionId.HasValue).ToList();
+            var topicIds = assignmentsForSlot.Select(a => sessions.Where(s => s.Id == a.SessionId).Single().TopicId).Distinct().ToList();
+            foreach (var topicId in topicIds)
+            {
+                if (topicId != null)
+                {
+                    var sessionIdsInTopic = sessions.Where(s => s.TopicId == topicId).Select(s => s.Id).ToList();
+                    var sessionCount = assignmentsForSlot.Where(a => sessionIdsInTopic.Contains(a.SessionId.Value)).Count();
+                    result += Convert.ToInt32(System.Math.Pow(2.0, Convert.ToDouble(sessionCount - 1)) - 1);
+                }
+            }
+
+            return result;
+        }
+
     }
 }
+

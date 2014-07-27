@@ -156,7 +156,9 @@ namespace ConferenceScheduler.Optimizer.Test
         [Test]
         public void AssigningAllDependenciesOfASessionPriorToThatSession()
         {
-            Engine engine = new Engine();
+            var eventHandler = new EventHandler();
+            Engine engine = new Engine(eventHandler.EngineUpdateEventHandler);
+
             var sessions = new SessionsCollection();
 
             var session1 = sessions.Add(1, null, Presenter.Create(1));

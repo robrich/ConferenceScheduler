@@ -45,5 +45,26 @@ namespace ConferenceScheduler.Optimizer.Test
 
             Console.WriteLine(result.ToString());
         }
+
+        public static string Serialize(this IEnumerable<Assignment> assignments)
+        {
+            var timeslots = assignments.Select(a => a.TimeslotId).Distinct().OrderBy(a => a);
+            var rooms = assignments.Select(a => a.RoomId).Distinct().OrderBy(a => a);
+
+            var result = new StringBuilder();
+            foreach (var room in rooms)
+            {
+                foreach (var timeslot in timeslots)
+                {
+                    var session = assignments.Where(a => a.RoomId == room && a.TimeslotId == timeslot).SingleOrDefault();
+                    if (session == null)
+                        result.Append("  ");
+                    else
+                        result.Append("{0:00}", session.SessionId);
+                }
+            }
+
+            return result.ToString();
+        }
     }
 }
