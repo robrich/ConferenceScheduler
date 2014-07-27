@@ -41,47 +41,18 @@ namespace ConferenceScheduler.Optimizer
             while (solution.AssignmentsCompleted < sessions.Count())
             {
                 if (solution.AssignSessionsWithOnlyOneOption() > 0)
-                    RaiseUpdateEvent(solution);
+                    solution.RaiseUpdateEvent(_updateEventHandler);
 
                 if (solution.AssignMostConstrainedSession() > 0)
-                    RaiseUpdateEvent(solution);
+                    solution.RaiseUpdateEvent(_updateEventHandler);
             }
 
-            var bestSolution = solution;
-            var bestScore = bestSolution.GetScore();
-
-            if (!bestSolution.IsFeasible)
+            if (!solution.IsFeasible)
                 throw new Exceptions.NoFeasibleSolutionsException();
             else
-            {
-                var maxAttempts = Convert.ToInt32(System.Math.Pow(2.0, Convert.ToDouble(solution.Assignments.Count() - 1)));
-                var attemptCount = 0;
+                solution = solution.Optimize(_updateEventHandler);
 
-                do
-                {
-                    // Try to improve the score
-                    solution = bestSolution.SwapAssignments();
-                    attemptCount++;
-                    var currentScore = solution.GetScore();
-                    if ((solution.IsFeasible) && (currentScore < bestScore))
-                    {
-                        bestSolution = solution;
-                        RaiseUpdateEvent(bestSolution);
-                    }
-                } while (attemptCount < maxAttempts);
-
-            }
-
-            return bestSolution.Results;
-        }
-
-        private void RaiseUpdateEvent(Solution solution)
-        {
-            if (_updateEventHandler != null)
-            {
-                var args = new ProcessUpdateEventArgs() { Assignments = solution.Assignments.ToList() };
-                _updateEventHandler.Invoke(args);
-            }
+            return solution.Results;
         }
 
     }

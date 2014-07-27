@@ -182,6 +182,40 @@ namespace ConferenceScheduler.Optimizer
             return new Solution(this);
         }
 
+        internal Solution Optimize(Action<ProcessUpdateEventArgs> updateEventHandler)
+        {
+            var bestSolution = this;
+            var bestScore = bestSolution.GetScore();
+
+            var maxAttempts = Convert.ToInt32(System.Math.Pow(2.0, Convert.ToDouble(this.Assignments.Count() - 1)));
+            var attemptCount = 0;
+            
+            Solution solution;
+            do
+            {
+                // Try to improve the score
+                solution = bestSolution.SwapAssignments();
+                attemptCount++;
+                var currentScore = solution.GetScore();
+                if ((solution.IsFeasible) && (currentScore < bestScore))
+                {
+                    bestSolution = solution;
+                    bestSolution.RaiseUpdateEvent(updateEventHandler);
+                }
+            } while (attemptCount < maxAttempts);
+
+            return bestSolution;
+        }
+
+        internal void RaiseUpdateEvent(Action<ProcessUpdateEventArgs> updateEventHandler)
+        {
+            if (updateEventHandler != null)
+            {
+                var args = new ProcessUpdateEventArgs() { Assignments = this.Assignments.ToList() };
+                updateEventHandler.Invoke(args);
+            }
+        }
+
         private void Load(IEnumerable<Session> sessions, IEnumerable<Room> rooms, IEnumerable<Timeslot> timeslots)
         {
             _sessions = sessions;
