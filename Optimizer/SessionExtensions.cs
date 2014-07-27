@@ -24,7 +24,6 @@ namespace ConferenceScheduler.Optimizer
             return (session.GetDependents(sessions).Count() > 0);
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal static int GetDependencyCount(this Session session)
         {
             int result = 0;
