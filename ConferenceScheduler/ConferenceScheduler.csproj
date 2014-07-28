@@ -49,6 +49,7 @@
     <Compile Include="Entities\Session.cs" />
     <Compile Include="Entities\SessionsCollection.cs" />
     <Compile Include="Entities\Timeslot.cs" />
+    <Compile Include="Exceptions\DependencyException.cs" />
     <Compile Include="Exceptions\NoFeasibleSolutionsException.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

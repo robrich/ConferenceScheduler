@@ -270,7 +270,7 @@ namespace ConferenceScheduler.Optimizer
                 throw new ArgumentException("Every session must have at least one presenter.");
 
             if (sessions.HaveCircularDependencies())
-                throw new ArgumentException("Sessions may not have circular dependencies.");
+                throw new Exceptions.DependencyException("Sessions may not have circular dependencies.");
         }
 
     }

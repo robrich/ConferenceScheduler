@@ -160,17 +160,17 @@ namespace ConferenceScheduler.Optimizer.Test
             var assignments = engine.Process(sessions, rooms, timeslots);
         }
 
-        [Test, ExpectedException(typeof(ArgumentException))]
-        public void ThrowingArgumentExceptionIfCircularDependenciesExist()
+        [Test, ExpectedException(typeof(Exceptions.DependencyException))]
+        public void ThrowingDependencyExceptionIfCircularDependenciesExist()
         {
 
             var presenter1 = Presenter.Create(1, 2);
 
             var sessions = new SessionsCollection();
 
-            var session1 = sessions.Add(1, 1);
-            var session2 = sessions.Add(2, 1);
-            var session3 = sessions.Add(3, 1);
+            var session1 = sessions.Add(1, 1, Presenter.Create(1));
+            var session2 = sessions.Add(2, 1, Presenter.Create(2));
+            var session3 = sessions.Add(3, 1, Presenter.Create(3));
 
             session1.AddDependency(session2);
             session2.AddDependency(session3);
