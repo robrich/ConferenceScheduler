@@ -12,13 +12,6 @@ namespace ConferenceScheduler.Entities
     public class Assignment
     {
         /// <summary>
-        /// Create an instance of a session-room-timeslot assignment
-        /// </summary>
-        public Assignment()
-        {
-        }
-
-        /// <summary>
         /// Create an instance of a room-timeslot node with a null session
         /// </summary>
         public Assignment(int roomId, int timeslotId)
