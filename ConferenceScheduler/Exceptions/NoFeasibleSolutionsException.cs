@@ -9,6 +9,7 @@ namespace ConferenceScheduler.Exceptions
     /// <summary>
     /// Indicates that the solution as specified has no feasible solutions
     /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
     public class NoFeasibleSolutionsException: Exception
     {
         const string _defaultMessage = "No feasible solutions were found";
@@ -28,17 +29,6 @@ namespace ConferenceScheduler.Exceptions
         public NoFeasibleSolutionsException(string message):base(message)
         {
         }
-
-        /// <summary>
-        /// Creates an instance of the exception with the specified message and innerException.
-        /// </summary>
-        /// <param name="message">The message to deliver to the downstream client.</param>
-        /// <param name="innerException">The exception that triggered this error.</param>
-        public NoFeasibleSolutionsException(string message, Exception innerException)
-            : base(message, innerException)
-        {
-        }
-
 
     }
 }

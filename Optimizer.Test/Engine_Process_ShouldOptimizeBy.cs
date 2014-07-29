@@ -144,9 +144,9 @@ namespace ConferenceScheduler.Optimizer.Test
             var s1TimeslotId = assignments.Where(a => a.SessionId == 1).Single().TimeslotId;
             var s3TimeslotId = assignments.Where(a => a.SessionId == 3).Single().TimeslotId;
             var s4TimeslotId = assignments.Where(a => a.SessionId == 4).Single().TimeslotId;
-            var slotsAreEqual = ((s1TimeslotId == s3TimeslotId) || (s1TimeslotId == s4TimeslotId) || (s3TimeslotId == s4TimeslotId));
+            var slotsAreDifferent = ((s1TimeslotId != s3TimeslotId) && (s1TimeslotId != s4TimeslotId) && (s3TimeslotId != s4TimeslotId));
 
-            Assert.False(slotsAreEqual, "Sessions with the same TopicId should not be in the same timeslot.");
+            Assert.True(slotsAreDifferent, "Sessions with the same TopicId should not be in the same timeslot.");
         }
     }
 }

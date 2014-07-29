@@ -33,7 +33,7 @@ namespace ConferenceScheduler.Entities
         /// <returns>True if the room is available during the timeslot, false if not</returns>
         public bool AvailableInTimeslot(int timeslotId)
         {
-            return (this.UnavailableForTimeslots == null || !this.UnavailableForTimeslots.Contains(timeslotId));
+            return (!this.UnavailableForTimeslots.Contains(timeslotId));
         }
 
         /// <summary>
