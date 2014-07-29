@@ -9,6 +9,7 @@ namespace ConferenceScheduler.Entities
     /// <summary>
     /// Represents a duration of time during which a conference session can occur
     /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1036:OverrideMethodsOnComparableTypes")]
     public class Timeslot : IComparable<Timeslot>
     {
         /// <summary>
@@ -90,20 +91,6 @@ namespace ConferenceScheduler.Entities
         /// for multi-day conferences</param>
         /// <returns>An object representing a duration of time during which 
         /// a conference session can occur</returns>
-        public static Timeslot Create(int id, double startHour, int dayIndex)
-        {
-            return Create(id, Convert.ToSingle(startHour), dayIndex);
-        }
-
-        /// <summary>
-        /// Create an instance of the object
-        /// </summary>
-        /// <param name="id">The unique identifier of the timeslot</param>
-        /// <param name="startHour">The starting hour of the timeslot</param>
-        /// <param name="dayIndex">The 0-based index value of the conference day 
-        /// for multi-day conferences</param>
-        /// <returns>An object representing a duration of time during which 
-        /// a conference session can occur</returns>
         public static Timeslot Create(int id, Single startHour, int dayIndex)
         {
             return new Timeslot()
@@ -114,7 +101,6 @@ namespace ConferenceScheduler.Entities
             };
         }
 
-        
         /// <summary>
         /// Returns a hash code representing the object
         /// </summary>
@@ -139,79 +125,6 @@ namespace ConferenceScheduler.Entities
                 return false;
             }
             return this.CompareTo(other) == 0;
-        }
-
-        /// <summary>
-        /// Compares two objects of this type
-        /// </summary>
-        /// <param name="left">The 1st object for comparison</param>
-        /// <param name="right">The 2nd object for comparison</param>
-        /// <returns>An integer</returns>
-        public static int Compare(Timeslot left, Timeslot right)
-        {
-            if (object.ReferenceEquals(left, right))
-            {
-                return 0;
-            }
-
-            if (object.ReferenceEquals(left, null))
-            {
-                return -1;
-            }
-
-            return left.CompareTo(right);
-        }
-
-        /// <summary>
-        /// Implements the == (equals) operator for this type
-        /// </summary>
-        /// <param name="left">The 1st object for comparison</param>
-        /// <param name="right">The 2nd object for comparison</param>
-        /// <returns>A boolean indicating if the objects have equivalent value</returns>
-        /// <remarks>Omitting this operator overload violates FxCop rule OverrideMethodsOnComparableTypes.</remarks>
-        public static bool operator ==(Timeslot left, Timeslot right)
-        {
-            if (object.ReferenceEquals(left, null))
-            {
-                return object.ReferenceEquals(right, null);
-            }
-            return left.Equals(right);
-        }
-
-        /// <summary>
-        /// Implements the != (not-equal) operator for this type
-        /// </summary>
-        /// <param name="left">The 1st object for comparison</param>
-        /// <param name="right">The 2nd object for comparison</param>
-        /// <returns>A boolean indicating if the objects have equivalent value</returns>
-        /// <remarks>Omitting this operator overload violates FxCop rule OverrideMethodsOnComparableTypes.</remarks>
-        public static bool operator !=(Timeslot left, Timeslot right)
-        {
-            return !(left == right);
-        }
-
-        /// <summary>
-        /// Implements the &lt; (less-than) operator for this type
-        /// </summary>
-        /// <param name="left">The 1st object for comparison</param>
-        /// <param name="right">The 2nd object for comparison</param>
-        /// <returns>A boolean indicating if the left object has a value less than the right object</returns>
-        /// <remarks>Omitting this operator overload violates FxCop rule OverrideMethodsOnComparableTypes.</remarks>
-        public static bool operator <(Timeslot left, Timeslot right)
-        {
-            return (Compare(left, right) < 0);
-        }
-
-        /// <summary>
-        /// Implements the &gt; (greater-than) operator for this type
-        /// </summary>
-        /// <param name="left">The 1st object for comparison</param>
-        /// <param name="right">The 2nd object for comparison</param>
-        /// <returns>A boolean indicating if the left object has a value greater than the right object</returns>
-        /// <remarks>Omitting this operator overload violates FxCop rule OverrideMethodsOnComparableTypes.</remarks>
-        public static bool operator >(Timeslot left, Timeslot right)
-        {
-            return (Compare(left, right) > 0);
         }
 
     }
