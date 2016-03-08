@@ -9,7 +9,7 @@ namespace ConferenceScheduler.Optimizer
     /// <summary>
     /// Holds methods used to perform optimizations to determine conference schedules.
     /// </summary>
-    public class Engine
+    public class Engine : Interfaces.IConferenceOptimizer
     {
         Action<ProcessUpdateEventArgs> _updateEventHandler;
 

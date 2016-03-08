@@ -11,17 +11,25 @@ namespace ConferenceScheduler.Entities
     /// </summary>
     public class SessionsCollection : List<Session>
     {
-        /// <summary>
-        /// Holds the list of presenters for all of the sessions
-        /// </summary>
-        public ICollection<Presenter> Presenters { get; private set; }
+        ///// <summary>
+        ///// Holds the list of presenters for all of the sessions
+        ///// </summary>
+        //public ICollection<Presenter> Presenters { get; private set; }
 
         /// <summary>
         /// Create an instance of the collection
         /// </summary>
-        public SessionsCollection()
+        public SessionsCollection() { }
+
+        /// <summary>
+        /// Create an instance of the collection from an existing collection
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "sessions")]
+        public SessionsCollection(IEnumerable<Session> sessions)
         {
-            this.Presenters = new List<Presenter>();
+            if (sessions != null && sessions.Any())
+            foreach (var session in sessions)
+                this.Add(session);
         }
 
         /// <summary>
@@ -67,7 +75,15 @@ namespace ConferenceScheduler.Entities
         //    return session;
         //}
 
-        private static Session CreateSession(int id, int? topicId, IEnumerable<Presenter> presenters)
+        // TODO: Document
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="topicId"></param>
+        /// <param name="presenters"></param>
+        /// <returns></returns>
+        public static Session CreateSession(int id, int? topicId, IEnumerable<Presenter> presenters)
         {
             return new Session()
             {
@@ -75,6 +91,39 @@ namespace ConferenceScheduler.Entities
                 TopicId = topicId,
                 Presenters = presenters
             };
+        }
+
+        // TODO: Document
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public bool HaveCircularDependencies()
+        {
+            bool result = false;
+            int i = 0;
+            var sessionsArray = this.ToArray();
+
+            while (!result && (i < this.Count()))
+            {
+                var session = sessionsArray[i];
+                if (session.IsDependentUpon(session.Id))
+                    result = true;
+                i++;
+            }
+
+            return result;
+        }
+
+        // TODO: Document
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
+        public IEnumerable<Presenter> GetPresenters()
+        {
+            return this.SelectMany(s => s.Presenters).Distinct();
         }
 
         //internal IEnumerable<Presenter> GetPresenters(int id, IEnumerable<Presenter> presenters)
@@ -108,7 +157,6 @@ namespace ConferenceScheduler.Entities
 
         //    return GetPresenters(id, new List<Presenter>() { presenter });
         //}
-
 
     }
 }

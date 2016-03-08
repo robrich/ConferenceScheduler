@@ -1,11 +1,11 @@
 ﻿using NUnit.Framework;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ConferenceScheduler.Optimizer;
 using ConferenceScheduler.Entities;
+using ConferenceScheduler.Interfaces;
 
 namespace ConferenceScheduler.Optimizer.Test
 {
@@ -15,7 +15,8 @@ namespace ConferenceScheduler.Optimizer.Test
         [Test]
         public void ReturningTheOnlyPossibleAssignmentIfTheFirstSessionIsDependentOnTheSecond()
         {
-            Engine engine = new Engine();
+            var engine = (null as IConferenceOptimizer).Create();
+
             var sessions = new SessionsCollection();
             var session1 = sessions.Add(1, null, Presenter.Create(1));
             var session2 = sessions.Add(2, null, Presenter.Create(1));
@@ -37,7 +38,8 @@ namespace ConferenceScheduler.Optimizer.Test
         [Test]
         public void ReturningTheOnlyPossibleAssignmentIfTheSecondSessionIsDependentOnTheFirst()
         {
-            Engine engine = new Engine();
+            var engine = (null as IConferenceOptimizer).Create();
+
             var sessions = new SessionsCollection();
             var session1 = sessions.Add(1, null, Presenter.Create(1));
             var session2 = sessions.Add(2, null, Presenter.Create(1));
@@ -59,7 +61,8 @@ namespace ConferenceScheduler.Optimizer.Test
         [Test]
         public void FindingTheOnlyValidTimeslotForASessionWithChainedDependencies()
         {
-            Engine engine = new Engine();
+            var engine = (null as IConferenceOptimizer).Create();
+
             var sessions = new SessionsCollection();
 
             var session1 = sessions.Add(1, null, Presenter.Create(1));
@@ -90,7 +93,8 @@ namespace ConferenceScheduler.Optimizer.Test
         [Test]
         public void FindingTheOnlyValidTimeslotForASessionWithMultipleDependencies()
         {
-            Engine engine = new Engine();
+            var engine = (null as IConferenceOptimizer).Create();
+
             var sessions = new SessionsCollection();
 
             var session1 = sessions.Add(1, null, Presenter.Create(1));
@@ -123,7 +127,8 @@ namespace ConferenceScheduler.Optimizer.Test
         [Test]
         public void FindingTheOnlyValidTimeslotForASessionWithMoreDependenciesThenRooms()
         {
-            Engine engine = new Engine();
+            var engine = (null as IConferenceOptimizer).Create();
+
             var sessions = new SessionsCollection();
 
             var session1 = sessions.Add(1, null, Presenter.Create(1));
@@ -156,8 +161,7 @@ namespace ConferenceScheduler.Optimizer.Test
         [Test]
         public void AssigningAllDependenciesOfASessionPriorToThatSession()
         {
-            var eventHandler = new EventHandler();
-            Engine engine = new Engine(eventHandler.EngineUpdateEventHandler);
+            var engine = (null as IConferenceOptimizer).Create();
 
             var sessions = new SessionsCollection();
 

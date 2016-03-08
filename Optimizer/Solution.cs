@@ -41,7 +41,7 @@ namespace ConferenceScheduler.Optimizer
         {
             this.Assignments = new List<Assignment>();
             Validate(sessions, rooms, timeslots);
-            Load(sessions, rooms, timeslots);
+            Load(new SessionsCollection(sessions), rooms, timeslots);
         }
 
         internal Solution(Solution solution)
@@ -216,7 +216,7 @@ namespace ConferenceScheduler.Optimizer
             }
         }
 
-        private void Load(IEnumerable<Session> sessions, IEnumerable<Room> rooms, IEnumerable<Timeslot> timeslots)
+        private void Load(SessionsCollection sessions, IEnumerable<Room> rooms, IEnumerable<Timeslot> timeslots)
         {
             _sessions = sessions;
             _rooms = rooms;
@@ -252,16 +252,19 @@ namespace ConferenceScheduler.Optimizer
         private static void Validate(IEnumerable<Session> sessions, IEnumerable<Room> rooms, IEnumerable<Timeslot> timeslots)
         {
             if (sessions == null)
-                throw new ArgumentNullException("sessions");
+                throw new ArgumentNullException(nameof(sessions));
 
             if (rooms == null)
-                throw new ArgumentNullException("rooms");
+                throw new ArgumentNullException(nameof(rooms));
 
             if (timeslots == null)
-                throw new ArgumentNullException("timeslots");
+                throw new ArgumentNullException(nameof(timeslots));
 
             if (timeslots.Count() == 0)
                 throw new ArgumentException("You must have at least one timeslot");
+
+            if (sessions.Count() == 0)
+                throw new ArgumentException("You must have at least one session");
 
             if (rooms.Count() == 0)
                 throw new ArgumentException("You must have at least one room");
@@ -269,7 +272,8 @@ namespace ConferenceScheduler.Optimizer
             if (sessions.Count(s => s.Presenters == null || s.Presenters.Count() < 1) > 0)
                 throw new ArgumentException("Every session must have at least one presenter.");
 
-            if (sessions.HaveCircularDependencies())
+            var presentations = new SessionsCollection(sessions);
+            if (presentations.HaveCircularDependencies())
                 throw new Exceptions.DependencyException("Sessions may not have circular dependencies.");
         }
 

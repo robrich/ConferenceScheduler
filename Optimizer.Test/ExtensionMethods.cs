@@ -2,13 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using ConferenceScheduler.Entities;
 
 namespace ConferenceScheduler.Optimizer.Test
 {
     public static class ExtensionMethods
     {
+        public static Interfaces.IConferenceOptimizer Create(this Interfaces.IConferenceOptimizer ignore)
+        {
+            return ignore.Create(new EventHandler());
+        }
+
+        public static Interfaces.IConferenceOptimizer Create(this Interfaces.IConferenceOptimizer ignore, EventHandler eventHandlers)
+        {
+            // return new Engine(eventHandlers.EngineUpdateEventHandler);
+            return new Gurobi.Engine(eventHandlers.EngineUpdateEventHandler);
+        }
+
         public static void Append(this StringBuilder sb, string format, params object[] data)
         {
             sb.Append(string.Format(format, data));

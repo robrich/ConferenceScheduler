@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ConferenceScheduler.Optimizer;
 using ConferenceScheduler.Entities;
+using ConferenceScheduler.Interfaces;
 
 namespace ConferenceScheduler.Optimizer.Test
 {
@@ -24,14 +25,16 @@ namespace ConferenceScheduler.Optimizer.Test
             var timeslots = new List<Timeslot>();
             timeslots.Add(new Timeslot() { Id = 1 });
 
-            Engine engine = new Engine();
+            var engine = (null as IConferenceOptimizer).Create();
+
             var assignments = engine.Process(sessions, rooms, timeslots);
         }
 
         [Test]
         public void ReturningTheCorrectAssignmentIfOneSpeakerIsAvailableForOnlyOneSlot()
         {
-            Engine engine = new Engine();
+            var engine = (null as IConferenceOptimizer).Create();
+
             var sessions = new SessionsCollection();
             sessions.Add(1, null, Presenter.Create(1));
             sessions.Add(2, null, Presenter.Create(2, 2)); // Only available for slot 1
@@ -53,7 +56,8 @@ namespace ConferenceScheduler.Optimizer.Test
         [Test]
         public void ReturningTheCorrectAssignmentIfTwoSpeakersAreAvailableForTwoOfTheThreeSlots()
         {
-            Engine engine = new Engine();
+            var engine = (null as IConferenceOptimizer).Create();
+
             var sessions = new SessionsCollection();
             sessions.Add(1, null, Presenter.Create(1, 2));    // Not available for slot 2
             sessions.Add(2, null, Presenter.Create(2, 2));    // Not available for slot 2
@@ -75,7 +79,7 @@ namespace ConferenceScheduler.Optimizer.Test
         }
 
         [Test, ExpectedException(typeof(Exceptions.NoFeasibleSolutionsException))]
-        public void ThrowingNoFeasibleSolutionIfSpeakerWouldHaveToBeInTwoPlacesAtOnce()
+        public void ThrowingNoFeasibleSolutionIfSpeakerWouldHaveToBeInTwoPlacesAtOnceDueTo2Sessions1Speaker1Timeslot()
         {
             var sessions = new SessionsCollection();
             sessions.Add(1, null, Presenter.Create(1));
@@ -88,9 +92,33 @@ namespace ConferenceScheduler.Optimizer.Test
             var timeslots = new List<Timeslot>();
             timeslots.Add(new Timeslot() { Id = 1 });
 
-            Engine engine = new Engine();
+            var engine = (null as IConferenceOptimizer).Create();
+
             var assignments = engine.Process(sessions, rooms, timeslots);
+            assignments.WriteSchedule();
         }
 
+        [Test, ExpectedException(typeof(Exceptions.NoFeasibleSolutionsException))]
+        public void ThrowingNoFeasibleSolutionIfSpeakerWouldHaveToBeInTwoPlacesAtOnce3SessionsFor1SpeakerWith2Timeslots()
+        {
+            var sessions = new SessionsCollection();
+            sessions.Add(1, null, Presenter.Create(1));
+            sessions.Add(2, null, Presenter.Create(1));
+            sessions.Add(3, null, Presenter.Create(2));
+            sessions.Add(4, null, Presenter.Create(1));
+
+            var rooms = new List<Room>();
+            rooms.Add(Room.Create(1, 10));
+            rooms.Add(Room.Create(2, 10));
+
+            var timeslots = new List<Timeslot>();
+            timeslots.Add(new Timeslot() { Id = 1 });
+            timeslots.Add(new Timeslot() { Id = 2 });
+
+            var engine = (null as IConferenceOptimizer).Create();
+
+            var assignments = engine.Process(sessions, rooms, timeslots);
+            assignments.WriteSchedule();
+        }
     }
 }

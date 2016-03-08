@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ConferenceScheduler.Optimizer;
 using ConferenceScheduler.Entities;
+using ConferenceScheduler.Interfaces;
 
 namespace ConferenceScheduler.Optimizer.Test
 {
@@ -13,7 +14,7 @@ namespace ConferenceScheduler.Optimizer.Test
     public class Engine_Process_ShouldValidateBy
     {
 
-        [Test, ExpectedException(typeof(Exceptions.NoFeasibleSolutionsException))]
+        [Test, ExpectedException(typeof(ArgumentException))]
         public void ThrowingNoFeasibleSolutionsExceptionIfNoSessionsSupplied()
         {
             var sessions = new SessionsCollection();
@@ -24,7 +25,8 @@ namespace ConferenceScheduler.Optimizer.Test
             var timeslots = new List<Timeslot>();
             timeslots.Add(Timeslot.Create(1));
 
-            Engine engine = new Engine();
+            var engine = (null as IConferenceOptimizer).Create();
+
             var assignments = engine.Process(sessions, rooms, timeslots);
         }
 
@@ -39,7 +41,8 @@ namespace ConferenceScheduler.Optimizer.Test
             var timeslots = new List<Timeslot>();
             timeslots.Add(Timeslot.Create(1));
 
-            Engine engine = new Engine();
+            var engine = (null as IConferenceOptimizer).Create();
+
             var assignments = engine.Process(sessions, rooms, timeslots);
         }
 
@@ -54,7 +57,8 @@ namespace ConferenceScheduler.Optimizer.Test
             var timeslots = new List<Timeslot>();
             timeslots.Add(Timeslot.Create(1));
 
-            Engine engine = new Engine();
+            var engine = (null as IConferenceOptimizer).Create();
+
             var assignments = engine.Process(sessions, rooms, timeslots);
         }
 
@@ -69,7 +73,8 @@ namespace ConferenceScheduler.Optimizer.Test
             var timeslots = new List<Timeslot>();
             timeslots.Add(Timeslot.Create(1));
 
-            Engine engine = new Engine();
+            var engine = (null as IConferenceOptimizer).Create();
+
             var assignments = engine.Process(sessions, rooms, timeslots);
         }
 
@@ -84,7 +89,8 @@ namespace ConferenceScheduler.Optimizer.Test
 
             var timeslots = new List<Timeslot>();
 
-            Engine engine = new Engine();
+            var engine = (null as IConferenceOptimizer).Create();
+
             var assignments = engine.Process(sessions, rooms, timeslots);
         }
 
@@ -99,14 +105,16 @@ namespace ConferenceScheduler.Optimizer.Test
 
             IEnumerable<Timeslot> timeslots = null;
 
-            Engine engine = new Engine();
+            var engine = (null as IConferenceOptimizer).Create();
+
             var assignments = engine.Process(sessions, rooms, timeslots);
         }
 
         [Test, ExpectedException(typeof(Exceptions.NoFeasibleSolutionsException))]
         public void ThrowingNoFeasibleSolutionIfThereAreMoreSessionsThanSlotsAndRooms()
         {
-            Engine engine = new Engine();
+            var engine = (null as IConferenceOptimizer).Create();
+
             var sessions = new SessionsCollection();
             sessions.Add(1, null, Presenter.Create(1));
             sessions.Add(2, null, Presenter.Create(2));
@@ -123,7 +131,8 @@ namespace ConferenceScheduler.Optimizer.Test
         [Test, ExpectedException(typeof(ArgumentException))]
         public void ThrowingArgumentExceptionIfThereIsntAtLeastOnePresenterForEachSession()
         {
-            Engine engine = new Engine();
+            var engine = (null as IConferenceOptimizer).Create();
+
             var sessions = new SessionsCollection();
             sessions.Add(1, 1);
             sessions.Add(new Session() { Id = 2 });
@@ -156,7 +165,8 @@ namespace ConferenceScheduler.Optimizer.Test
             timeslots.Add(Timeslot.Create(1));
             timeslots.Add(Timeslot.Create(2));
 
-            Engine engine = new Engine();
+            var engine = (null as IConferenceOptimizer).Create();
+
             var assignments = engine.Process(sessions, rooms, timeslots);
         }
 
@@ -184,7 +194,8 @@ namespace ConferenceScheduler.Optimizer.Test
             timeslots.Add(Timeslot.Create(1));
             timeslots.Add(Timeslot.Create(2));
 
-            Engine engine = new Engine();
+            var engine = (null as IConferenceOptimizer).Create();
+
             var assignments = engine.Process(sessions, rooms, timeslots);
 
         }
