@@ -1,5 +1,6 @@
 ﻿using ConferenceScheduler.Entities;
 using ConferenceScheduler.Exceptions;
+using Google.OrTools.LinearSolver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,11 +13,9 @@ namespace ConferenceScheduler.Optimizer.Glop
     {
         Action<ProcessUpdateEventArgs> _updateEventHandler;
 
-        //GRBEnv _env;
-        //GRBModel _model;
-
-        //GRBVar[,,] _v;
-        //GRBVar[] _s;
+        Solver _model;
+        Variable[,,] _v;
+        Variable[] _s;
 
         int[] _timeslotIds;
         int[] _sessionIds;
@@ -29,8 +28,7 @@ namespace ConferenceScheduler.Optimizer.Glop
         public Engine(Action<ProcessUpdateEventArgs> updateEventHandler)
         {
             _updateEventHandler = updateEventHandler;
-            //_env = new GRBEnv("ConferenceOptimizer.log");
-            //_model = new GRBModel(_env);
+            _model = CreateLinearProgrammingSolver();
         }
 
         public IEnumerable<Assignment> Process(IEnumerable<Session> sessions, IEnumerable<Room> rooms, IEnumerable<Timeslot> timeslots)
@@ -64,78 +62,73 @@ namespace ConferenceScheduler.Optimizer.Glop
             CreateVariables(sessions.Count(), rooms.Count(), timeslots.Count());
             CreateConstraints(sessions, rooms, timeslots.Count());
 
-            // _model.Optimize();
-            //var status = _model.Get(GRB.IntAttr.Status);
-            //if (status == GRB.Status.INFEASIBLE)
-            //    throw new NoFeasibleSolutionsException();
+            int status = _model.Solve();
+            if (status != Solver.OPTIMAL)
+                throw new NoFeasibleSolutionsException();
 
-            //var v = _model.Get(GRB.DoubleAttr.X, _v);
+            // var v = _model.Get(GRB.DoubleAttr.X, _v);
             //var p = _model.Get(GRB.DoubleAttr.X, _s);
 
             //for (int i = 0; i < sessions.Count(); i++)
             //    Console.WriteLine($"s[{i}] = {p[i]}");
 
             var results = new List<Assignment>();
-            //for (int s = 0; s < sessions.Count(); s++)
-            //    for (int r = 0; r < rooms.Count(); r++)
-            //        for (int t = 0; t < timeslots.Count(); t++)
-            //        {
-            //            if (v[s, r, t] == 1.0)
-            //                results.Add(new Assignment(_roomIds[r], _timeslotIds[t], _sessionIds[s]));
-            //        }
+            for (int s = 0; s < sessions.Count(); s++)
+                for (int r = 0; r < rooms.Count(); r++)
+                    for (int t = 0; t < timeslots.Count(); t++)
+                    {
+                        if (_v[s, r, t].SolutionValue() == 1.0)
+                            results.Add(new Assignment(_roomIds[r], _timeslotIds[t], _sessionIds[s]));
+                    }
 
             return results;
         }
 
         private void CreateVariables(int sessionCount, int roomCount, int timeslotCount)
         {
-            //_v = new GRBVar[sessionCount, roomCount, timeslotCount];
-            //for (int s = 0; s < sessionCount; s++)
-            //    for (int r = 0; r < roomCount; r++)
-            //        for (int t = 0; t < timeslotCount; t++)
-            //        {
-            //            _v[s, r, t] = _model.AddVar(0.0, 1.0, 0.0, GRB.BINARY, $"x[{s},{r},{t}]");
-            //            Console.WriteLine($"x[{s},{r},{t}]");
-            //        }
+            _v = new Variable[sessionCount, roomCount, timeslotCount];
+            for (int s = 0; s < sessionCount; s++)
+                for (int r = 0; r < roomCount; r++)
+                    for (int t = 0; t < timeslotCount; t++)
+                    {
+                        _v[s, r, t] = _model.MakeIntVar(0.0, 1.0, $"x[{s},{r},{t}]");
+                        Console.WriteLine($"x[{s},{r},{t}]");
+                    }
 
-            //_s = new GRBVar[sessionCount];
-            //for (int s = 0; s < sessionCount; s++)
-            //{
-            //    _s[s] = _model.AddVar(0.0, Convert.ToDouble(timeslotCount), 0.0, GRB.INTEGER, $"s[{s}]");
-            //    Console.WriteLine($"s[{s}]");
-            //}
-
-            //_model.Update();
+            _s = new Variable[sessionCount];
+            for (int s = 0; s < sessionCount; s++)
+            {
+                _s[s] = _model.MakeIntVar(0.0, Convert.ToDouble(timeslotCount), $"s[{s}]");
+                Console.WriteLine($"s[{s}]");
+            }
         }
 
         private void CreateConstraints(IEnumerable<Session> sessions, IEnumerable<Room> rooms, int timeslotCount)
         {
-            //int sessionCount = sessions.Count();
-            //int roomCount = rooms.Count();
+            int sessionCount = sessions.Count();
+            int roomCount = rooms.Count();
 
-            //// Each room can have no more than 1 session per timeslot
-            //for (int r = 0; r < roomCount; r++)
-            //    for (int t = 0; t < timeslotCount; t++)
-            //    {
-            //        GRBLinExpr expr = 0.0;
-            //        for (int s = 0; s < sessionCount; s++)
-            //            expr.AddTerm(1.0, _v[s, r, t]);
+            // Each room can have no more than 1 session per timeslot
+            for (int r = 0; r < roomCount; r++)
+                for (int t = 0; t < timeslotCount; t++)
+                {
+                    Constraint expr = _model.MakeConstraint(0,1, $"x[*,{r},{t}]_LessEqual_1");
+                    for (int s = 0; s < sessionCount; s++)
+                        expr.SetCoefficient(_v[s, r, t], 1);
 
-            //        _model.AddConstr(expr <= 1.0, $"x[*,{r},{t}]_LessEqual_1");
-            //        Console.WriteLine($"x[*,{r},{t}]_LessEqual_1");
-            //    }
+                    Console.WriteLine($"x[*,{r},{t}]_LessEqual_1");
+                }
+            
+            // Each session must be assigned to exactly 1 room/timeslot combination
+            for (int s = 0; s < sessionCount; s++)
+            {
+                Constraint expr = _model.MakeConstraint(1.0,1.0, $"x[{s},*,*]_Equals_1");
+                for (int r = 0; r < roomCount; r++)
+                    for (int t = 0; t < timeslotCount; t++)
+                        expr.SetCoefficient(_v[s, r, t], 1.0);
 
-            //// Each session must be assigned to exactly 1 room/timeslot combination
-            //for (int s = 0; s < sessionCount; s++)
-            //{
-            //    GRBLinExpr expr = 0.0;
-            //    for (int r = 0; r < roomCount; r++)
-            //        for (int t = 0; t < timeslotCount; t++)
-            //            expr.AddTerm(1.0, _v[s, r, t]);
-
-            //    _model.AddConstr(expr == 1.0, $"x[{s},*,*]_Equals_1");
-            //    Console.WriteLine($"x[{s},*,*]_Equals_1");
-            //}
+                Console.WriteLine($"x[{s},*,*]_Equals_1");
+            }
 
             //// No room can be assigned to a session in a timeslot 
             //// during which it is not available
@@ -219,7 +212,6 @@ namespace ConferenceScheduler.Optimizer.Glop
             //    }
             //}
 
-            //_model.Update();
         }
 
         private void CreateConstraintSessionsMustBeInDifferentTimeslots(int session1Index, int session2Index, int timeslotCount, int roomCount)
@@ -263,6 +255,15 @@ namespace ConferenceScheduler.Optimizer.Glop
             var presentations = new SessionsCollection(sessions);
             if (presentations.HaveCircularDependencies())
                 throw new DependencyException("Sessions may not have circular dependencies.");
+        }
+
+
+        private static Solver CreateLinearProgrammingSolver()
+        {
+            Solver solver = Solver.CreateSolver("LinearProgramming", "GLOP_LINEAR_PROGRAMMING");
+            if (solver == null)
+                throw new InvalidOperationException("Could not create solver");
+            return solver;
         }
 
     }
