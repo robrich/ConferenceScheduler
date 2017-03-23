@@ -13,7 +13,7 @@ namespace ConferenceScheduler.Optimizer.Test
     [TestFixture]
     public class Engine_Process_ShouldRespectPresentersWishesBy
     {
-        [Test, ExpectedException(typeof(Exceptions.NoFeasibleSolutionsException))]
+        [Test]
         public void ThrowingNoFeasibleSolutionIfSpeakerIsUnavailableForAllTimeslots()
         {
             var sessions = new SessionsCollection();
@@ -27,7 +27,7 @@ namespace ConferenceScheduler.Optimizer.Test
 
             var engine = (null as IConferenceOptimizer).Create();
 
-            var assignments = engine.Process(sessions, rooms, timeslots);
+            Assert.Throws<Exceptions.NoFeasibleSolutionsException>(() => engine.Process(sessions, rooms, timeslots));
         }
 
         [Test]
@@ -78,7 +78,7 @@ namespace ConferenceScheduler.Optimizer.Test
             Assert.That(checkAssignment.TimeslotId, Is.EqualTo(2), "Session 3 should have been assigned to slot 2.");
         }
 
-        [Test, ExpectedException(typeof(Exceptions.NoFeasibleSolutionsException))]
+        [Test]
         public void ThrowingNoFeasibleSolutionIfSpeakerWouldHaveToBeInTwoPlacesAtOnceDueTo2Sessions1Speaker1Timeslot()
         {
             var sessions = new SessionsCollection();
@@ -95,10 +95,11 @@ namespace ConferenceScheduler.Optimizer.Test
             var engine = (null as IConferenceOptimizer).Create();
 
             var assignments = engine.Process(sessions, rooms, timeslots);
-            assignments.WriteSchedule();
+
+            Assert.Throws<Exceptions.NoFeasibleSolutionsException>(() => assignments.WriteSchedule());
         }
 
-        [Test, ExpectedException(typeof(Exceptions.NoFeasibleSolutionsException))]
+        [Test]
         public void ThrowingNoFeasibleSolutionIfSpeakerWouldHaveToBeInTwoPlacesAtOnce3SessionsFor1SpeakerWith2Timeslots()
         {
             var sessions = new SessionsCollection();
@@ -118,7 +119,8 @@ namespace ConferenceScheduler.Optimizer.Test
             var engine = (null as IConferenceOptimizer).Create();
 
             var assignments = engine.Process(sessions, rooms, timeslots);
-            assignments.WriteSchedule();
+
+            Assert.Throws<Exceptions.NoFeasibleSolutionsException>(() => assignments.WriteSchedule());
         }
     }
 }

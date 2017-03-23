@@ -16,7 +16,8 @@ namespace ConferenceScheduler.Optimizer.Test
         public static Interfaces.IConferenceOptimizer Create(this Interfaces.IConferenceOptimizer ignore, EventHandler eventHandlers)
         {
             // return new Engine(eventHandlers.EngineUpdateEventHandler);
-            return new Gurobi.Engine(eventHandlers.EngineUpdateEventHandler);
+            // return new Gurobi.Engine(eventHandlers.EngineUpdateEventHandler);
+            return new Glop.Engine(eventHandlers.EngineUpdateEventHandler);
         }
 
         public static void Append(this StringBuilder sb, string format, params object[] data)

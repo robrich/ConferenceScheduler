@@ -48,9 +48,8 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="nunit.framework, Version=2.6.3.13283, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="nunit.framework, Version=3.6.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit.3.6.1\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -73,6 +72,10 @@
     <ProjectReference Include="..\ConferenceScheduler\ConferenceScheduler.csproj">
       <Project>{fc1b17fd-6629-4da6-b9ba-e5684d6c056e}</Project>
       <Name>ConferenceScheduler</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Optimizer.Glop\Optimizer.Glop.csproj">
+      <Project>{710a33e1-1e6e-4dad-be14-cf2096ae6713}</Project>
+      <Name>Optimizer.Glop</Name>
     </ProjectReference>
     <ProjectReference Include="..\Optimizer.Gurobi\Optimizer.Gurobi.csproj">
       <Project>{0e2eea41-d3f6-4f27-8a05-6b1394742014}</Project>

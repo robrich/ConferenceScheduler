@@ -14,7 +14,7 @@ namespace ConferenceScheduler.Optimizer.Test
     public class Engine_Process_ShouldValidateBy
     {
 
-        [Test, ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void ThrowingNoFeasibleSolutionsExceptionIfNoSessionsSupplied()
         {
             var sessions = new SessionsCollection();
@@ -27,10 +27,10 @@ namespace ConferenceScheduler.Optimizer.Test
 
             var engine = (null as IConferenceOptimizer).Create();
 
-            var assignments = engine.Process(sessions, rooms, timeslots);
+            Assert.Throws<ArgumentException>(() => engine.Process(sessions, rooms, timeslots));
         }
 
-        [Test, ExpectedException(typeof(ArgumentNullException))]
+        [Test]
         public void ThrowingArgumentNullExceptionIfSessionsIsNull()
         {
             IEnumerable<Session> sessions = null;
@@ -43,10 +43,10 @@ namespace ConferenceScheduler.Optimizer.Test
 
             var engine = (null as IConferenceOptimizer).Create();
 
-            var assignments = engine.Process(sessions, rooms, timeslots);
+            Assert.Throws<ArgumentNullException>(() => engine.Process(sessions, rooms, timeslots));
         }
 
-        [Test, ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void ThrowingArgumentExceptionIfNoRoomsSupplied()
         {
             var sessions = new SessionsCollection();
@@ -59,10 +59,10 @@ namespace ConferenceScheduler.Optimizer.Test
 
             var engine = (null as IConferenceOptimizer).Create();
 
-            var assignments = engine.Process(sessions, rooms, timeslots);
+            Assert.Throws<ArgumentException>(() => engine.Process(sessions, rooms, timeslots));
         }
 
-        [Test, ExpectedException(typeof(ArgumentNullException))]
+        [Test]
         public void ThrowingArgumentNullExceptionIfRoomsIsNull()
         {
             var sessions = new SessionsCollection();
@@ -75,10 +75,10 @@ namespace ConferenceScheduler.Optimizer.Test
 
             var engine = (null as IConferenceOptimizer).Create();
 
-            var assignments = engine.Process(sessions, rooms, timeslots);
+            Assert.Throws<ArgumentNullException>(() => engine.Process(sessions, rooms, timeslots));
         }
 
-        [Test, ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void ThrowingArgumentExceptionIfNoTimeslotsSupplied()
         {
             var sessions = new SessionsCollection();
@@ -91,10 +91,10 @@ namespace ConferenceScheduler.Optimizer.Test
 
             var engine = (null as IConferenceOptimizer).Create();
 
-            var assignments = engine.Process(sessions, rooms, timeslots);
+            Assert.Throws<ArgumentException>(() => engine.Process(sessions, rooms, timeslots));
         }
 
-        [Test, ExpectedException(typeof(ArgumentNullException))]
+        [Test]
         public void ThrowingArgumentNullExceptionIfTimeslotsIsNull()
         {
             var sessions = new SessionsCollection();
@@ -107,10 +107,10 @@ namespace ConferenceScheduler.Optimizer.Test
 
             var engine = (null as IConferenceOptimizer).Create();
 
-            var assignments = engine.Process(sessions, rooms, timeslots);
+            Assert.Throws<ArgumentNullException>(() => engine.Process(sessions, rooms, timeslots));
         }
 
-        [Test, ExpectedException(typeof(Exceptions.NoFeasibleSolutionsException))]
+        [Test]
         public void ThrowingNoFeasibleSolutionIfThereAreMoreSessionsThanSlotsAndRooms()
         {
             var engine = (null as IConferenceOptimizer).Create();
@@ -125,10 +125,10 @@ namespace ConferenceScheduler.Optimizer.Test
             var timeslots = new List<Timeslot>();
             timeslots.Add(Timeslot.Create(1));
 
-            var assignments = engine.Process(sessions, rooms, timeslots);
+            Assert.Throws<Exceptions.NoFeasibleSolutionsException>(() => engine.Process(sessions, rooms, timeslots));
         }
 
-        [Test, ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void ThrowingArgumentExceptionIfThereIsntAtLeastOnePresenterForEachSession()
         {
             var engine = (null as IConferenceOptimizer).Create();
@@ -144,10 +144,10 @@ namespace ConferenceScheduler.Optimizer.Test
             timeslots.Add(Timeslot.Create(1));
             timeslots.Add(Timeslot.Create(2));
 
-            var assignments = engine.Process(sessions, rooms, timeslots);
+            Assert.Throws<ArgumentException>(() => engine.Process(sessions, rooms, timeslots));
         }
 
-        [Test, ExpectedException(typeof(Exceptions.NoFeasibleSolutionsException))]
+        [Test]
         public void ThrowingNoFeasibleSolutionIfAvailableTimeslotsForAMultiPresenterSessionDontIntersect()
         {
             // 2 presenters for one session where neither
@@ -167,10 +167,10 @@ namespace ConferenceScheduler.Optimizer.Test
 
             var engine = (null as IConferenceOptimizer).Create();
 
-            var assignments = engine.Process(sessions, rooms, timeslots);
+            Assert.Throws<Exceptions.NoFeasibleSolutionsException>(() => engine.Process(sessions, rooms, timeslots));
         }
 
-        [Test, ExpectedException(typeof(Exceptions.DependencyException))]
+        [Test]
         public void ThrowingDependencyExceptionIfCircularDependenciesExist()
         {
 
@@ -196,7 +196,7 @@ namespace ConferenceScheduler.Optimizer.Test
 
             var engine = (null as IConferenceOptimizer).Create();
 
-            var assignments = engine.Process(sessions, rooms, timeslots);
+            Assert.Throws<Exceptions.DependencyException>(() => engine.Process(sessions, rooms, timeslots));
 
         }
     }
