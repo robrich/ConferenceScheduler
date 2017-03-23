@@ -7,6 +7,7 @@ using ConferenceScheduler.Entities;
 using Gurobi;
 using System.Diagnostics;
 using ConferenceScheduler.Exceptions;
+using ConferenceScheduler.Extensions;
 
 namespace ConferenceScheduler.Optimizer.Gurobi
 {
