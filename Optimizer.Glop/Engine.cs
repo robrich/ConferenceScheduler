@@ -146,32 +146,31 @@ namespace ConferenceScheduler.Optimizer.Glop
                 }
             }
 
-            //// Sessions cannot be assigned to a timeslot during which
-            //// any presenter is unavailable
-            //foreach (var session in sessions)
-            //{
-            //    int sessionIndex = _sessionIds.IndexOfValue(session.Id).Value;
+            // Sessions cannot be assigned to a timeslot during which
+            // any presenter is unavailable
+            foreach (var session in sessions)
+            {
+                int sessionIndex = _sessionIds.IndexOfValue(session.Id).Value;
 
-            //    List<int> unavailableTimeslotIndexes = new List<int>();
-            //    foreach (var presenter in session.Presenters)
-            //    {
-            //        foreach (var unavailableTimeslot in presenter.UnavailableForTimeslots)
-            //        {
-            //            int timeslotIndex = _timeslotIds.IndexOfValue(unavailableTimeslot).Value;
-            //            unavailableTimeslotIndexes.Add(timeslotIndex);
-            //        }
-            //    }
+                List<int> unavailableTimeslotIndexes = new List<int>();
+                foreach (var presenter in session.Presenters)
+                {
+                    foreach (var unavailableTimeslot in presenter.UnavailableForTimeslots)
+                    {
+                        int timeslotIndex = _timeslotIds.IndexOfValue(unavailableTimeslot).Value;
+                        unavailableTimeslotIndexes.Add(timeslotIndex);
+                    }
+                }
 
-            //    if (unavailableTimeslotIndexes.Any())
-            //    {
-            //        GRBLinExpr expr = 0.0;
-            //        foreach (var utsi in unavailableTimeslotIndexes.Distinct())
-            //            for (int r = 0; r < roomCount; r++)
-            //                expr.AddTerm(1.0, _v[sessionIndex, r, utsi]);
-            //        _model.AddConstr(expr == 0, $"PresentersUnavailable_Session[{sessionIndex}");
-            //        Console.WriteLine($"PresentersUnavailable_Session[{sessionIndex}");
-            //    }
-            //}
+                if (unavailableTimeslotIndexes.Any())
+                {
+                    Constraint expr = _model.MakeConstraint(0.0, 0.0, $"PresentersUnavailable_Session[{sessionIndex}");
+                    foreach (var utsi in unavailableTimeslotIndexes.Distinct())
+                        for (int r = 0; r < roomCount; r++)
+                            expr.SetCoefficient(_v[sessionIndex, r, utsi], 1.0);
+                    Console.WriteLine($"PresentersUnavailable_Session[{sessionIndex}");
+                }
+            }
 
             //// A speaker can only be involved with 1 session per timeslot
             //var speakerIds = sessions.SelectMany(s => s.Presenters.Select(p => p.Id)).Distinct();
