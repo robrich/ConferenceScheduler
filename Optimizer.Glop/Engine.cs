@@ -1,5 +1,6 @@
 ﻿using ConferenceScheduler.Entities;
 using ConferenceScheduler.Exceptions;
+using ConferenceScheduler.Extensions;
 using Google.OrTools.LinearSolver;
 using System;
 using System.Collections.Generic;
@@ -130,21 +131,20 @@ namespace ConferenceScheduler.Optimizer.Glop
                 Console.WriteLine($"x[{s},*,*]_Equals_1");
             }
 
-            //// No room can be assigned to a session in a timeslot 
-            //// during which it is not available
-            //foreach (var room in rooms)
-            //{
-            //    int roomIndex = _roomIds.IndexOfValue(room.Id).Value;
-            //    foreach (var uts in room.UnavailableForTimeslots)
-            //    {
-            //        int utsi = _timeslotIds.IndexOfValue(uts).Value;
-            //        GRBLinExpr expr = 0.0;
-            //        for (int s = 0; s < sessionCount; s++)
-            //            expr.AddTerm(1.0, _v[s, roomIndex, utsi]);
-            //        _model.AddConstr(expr == 0.0, $"x[*,{roomIndex},{utsi}]_Equals_0");
-            //        Console.WriteLine($"x[*,{roomIndex},{utsi}]_Equals_0");
-            //    }
-            //}
+            // No room can be assigned to a session in a timeslot 
+            // during which it is not available
+            foreach (var room in rooms)
+            {
+                int roomIndex = _roomIds.IndexOfValue(room.Id).Value;
+                foreach (var uts in room.UnavailableForTimeslots)
+                {
+                    int utsi = _timeslotIds.IndexOfValue(uts).Value;
+                    Constraint expr = _model.MakeConstraint(0.0, 0.0, $"x[*,{roomIndex},{utsi}]_Equals_0");
+                    for (int s = 0; s < sessionCount; s++)
+                        expr.SetCoefficient(_v[s, roomIndex, utsi], 1.0);
+                    Console.WriteLine($"x[*,{roomIndex},{utsi}]_Equals_0");
+                }
+            }
 
             //// Sessions cannot be assigned to a timeslot during which
             //// any presenter is unavailable
