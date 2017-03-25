@@ -94,9 +94,7 @@ namespace ConferenceScheduler.Optimizer.Test
 
             var engine = (null as IConferenceOptimizer).Create();
 
-            var assignments = engine.Process(sessions, rooms, timeslots);
-
-            Assert.Throws<Exceptions.NoFeasibleSolutionsException>(() => assignments.WriteSchedule());
+            Assert.Throws<Exceptions.NoFeasibleSolutionsException>(() => engine.Process(sessions, rooms, timeslots));
         }
 
         [Test]
@@ -118,9 +116,7 @@ namespace ConferenceScheduler.Optimizer.Test
 
             var engine = (null as IConferenceOptimizer).Create();
 
-            var assignments = engine.Process(sessions, rooms, timeslots);
-
-            Assert.Throws<Exceptions.NoFeasibleSolutionsException>(() => assignments.WriteSchedule());
+            Assert.Throws<Exceptions.NoFeasibleSolutionsException>(() => engine.Process(sessions, rooms, timeslots));
         }
     }
 }

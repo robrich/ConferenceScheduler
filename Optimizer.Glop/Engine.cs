@@ -29,7 +29,8 @@ namespace ConferenceScheduler.Optimizer.Glop
         public Engine(Action<ProcessUpdateEventArgs> updateEventHandler)
         {
             _updateEventHandler = updateEventHandler;
-            _model = CreateLinearProgrammingSolver();
+            _model = CreateMixedIntegerProgrammingSolver();
+            // _model = CreateLinearProgrammingSolver();
         }
 
         public IEnumerable<Assignment> Process(IEnumerable<Session> sessions, IEnumerable<Room> rooms, IEnumerable<Timeslot> timeslots)
@@ -92,15 +93,15 @@ namespace ConferenceScheduler.Optimizer.Glop
                 for (int r = 0; r < roomCount; r++)
                     for (int t = 0; t < timeslotCount; t++)
                     {
-                        _v[s, r, t] = _model.MakeIntVar(0.0, 1.0, $"x[{s},{r},{t}]");
-                        Console.WriteLine($"x[{s},{r},{t}]");
+                        _v[s, r, t] = _model.MakeBoolVar($"x[{s},{r},{t}]");
+                        Console.WriteLine($"Variable: x[{s},{r},{t}]");
                     }
 
             _s = new Variable[sessionCount];
             for (int s = 0; s < sessionCount; s++)
             {
                 _s[s] = _model.MakeIntVar(0.0, Convert.ToDouble(timeslotCount), $"s[{s}]");
-                Console.WriteLine($"s[{s}]");
+                Console.WriteLine($"Variable: s[{s}]");
             }
         }
 
@@ -113,17 +114,17 @@ namespace ConferenceScheduler.Optimizer.Glop
             for (int r = 0; r < roomCount; r++)
                 for (int t = 0; t < timeslotCount; t++)
                 {
-                    Constraint expr = _model.MakeConstraint(0,1, $"x[*,{r},{t}]_LessEqual_1");
+                    Constraint expr = _model.MakeConstraint(0, 1, $"x[*,{r},{t}]_LessEqual_1");
                     for (int s = 0; s < sessionCount; s++)
                         expr.SetCoefficient(_v[s, r, t], 1);
 
                     Console.WriteLine($"x[*,{r},{t}]_LessEqual_1");
                 }
-            
+
             // Each session must be assigned to exactly 1 room/timeslot combination
             for (int s = 0; s < sessionCount; s++)
             {
-                Constraint expr = _model.MakeConstraint(1.0,1.0, $"x[{s},*,*]_Equals_1");
+                Constraint expr = _model.MakeConstraint(1.0, 1.0, $"x[{s},*,*]_Equals_1");
                 for (int r = 0; r < roomCount; r++)
                     for (int t = 0; t < timeslotCount; t++)
                         expr.SetCoefficient(_v[s, r, t], 1.0);
@@ -172,29 +173,59 @@ namespace ConferenceScheduler.Optimizer.Glop
                 }
             }
 
-            //// A speaker can only be involved with 1 session per timeslot
-            //var speakerIds = sessions.SelectMany(s => s.Presenters.Select(p => p.Id)).Distinct();
-            //foreach (int speakerId in speakerIds)
-            //{
-            //    var pIds = sessions.Where(s => s.Presenters.Select(p => p.Id).Contains(speakerId)).Select(s => s.Id).ToArray();
-            //    for (int i = 0; i < pIds.Length - 1; i++)
-            //        for (int j = i + 1; j < pIds.Length; j++)
-            //        {
-            //            int session1Index = _sessionIds.IndexOfValue(pIds[i]).Value;
-            //            int session2Index = _sessionIds.IndexOfValue(pIds[j]).Value;
-            //            CreateConstraintSessionsMustBeInDifferentTimeslots(session1Index, session2Index, timeslotCount, roomCount);
-            //        }
-            //}
+            // A speaker can only be involved with 1 session per timeslot
+            var speakerIds = sessions.SelectMany(s => s.Presenters.Select(p => p.Id)).Distinct();
+            foreach (int speakerId in speakerIds)
+            {
+                var pIds = sessions.Where(s => s.Presenters.Select(p => p.Id).Contains(speakerId)).Select(s => s.Id).ToArray();
+                for (int i = 0; i < pIds.Length - 1; i++)
+                    for (int j = i + 1; j < pIds.Length; j++)
+                    {
+                        int session1Index = _sessionIds.IndexOfValue(pIds[i]).Value;
+                        int session2Index = _sessionIds.IndexOfValue(pIds[j]).Value;
+                        CreateConstraintSessionsMustBeInDifferentTimeslots(session1Index, session2Index, timeslotCount, roomCount);
+                    }
+            }
 
-            //// The value of s[i] must be equal to the index of the timeslot
-            //// that session i is assigned to
+            // A timeslot should have no more sessions in a particular 
+            // topicId than absolutely necessary.
+            var topicIds = sessions.Where(s => s.TopicId.HasValue).Select(s => s.TopicId.Value).Distinct();
+            foreach (var topicId in topicIds)
+            {
+                double topicCount = sessions.Count(s => s.TopicId == topicId);
+                double maxTopicCount = System.Math.Ceiling(topicCount / Convert.ToDouble(timeslotCount));
+
+                for (int t = 0; t < timeslotCount; t++)
+                {
+                    var expr = _model.MakeConstraint(0.0, maxTopicCount, $"x[(topicId={topicId}),*,{t}]_LessEqual_{maxTopicCount}");
+                    foreach (var session in sessions.Where(s => s.TopicId == topicId))
+                    {
+                        int sessionIndex = _sessionIds.IndexOfValue(session.Id).Value;
+                        for (int r = 0; r < roomCount; r++)
+                            expr.SetCoefficient(_v[sessionIndex, r, t], 1.0);
+                    }
+                    Console.WriteLine($"x[(topicId={topicId}),*,{t}]_LessEqual_{maxTopicCount}");
+                }
+            }
+
+
+            // The value of s[i] must be equal to the index of the timeslot
+            // that session i is assigned to
             //for (int i = 0; i < sessionCount; i++)
             //{
-            //    GRBLinExpr expr = 0.0;
+            //    _model.
+            //    var dict = new Dictionary<Variable, double>();
             //    for (int t = 0; t < timeslotCount; t++)
             //        for (int r = 0; r < roomCount; r++)
-            //            expr.AddTerm(t, _v[i, r, t]);
-            //    _model.AddConstr(_s[i] == expr, $"s[{i}]_Equals_Timeslot_x[{i},*,*]");
+            //            dict.Add(_v[i, r, t], t);
+
+            //    // 0.0, timeslotCount, $"s[{i}]_Equals_Timeslot_x[{i},*,*]");
+
+            //    var c = new LinearExpr();
+            //    var r1 = c.Visit(dict);
+            //    var lc = new LinearConstraint();
+
+            //    _model.Add(_s[i] == dict);
             //    Console.WriteLine($"s[{i}]_Equals_Timeslot");
             //}
 
@@ -215,17 +246,16 @@ namespace ConferenceScheduler.Optimizer.Glop
 
         private void CreateConstraintSessionsMustBeInDifferentTimeslots(int session1Index, int session2Index, int timeslotCount, int roomCount)
         {
-            //for (int t = 0; t < timeslotCount; t++)
-            //{
-            //    GRBLinExpr expr = 0.0;
-            //    for (int r = 0; r < roomCount; r++)
-            //    {
-            //        expr.AddTerm(1.0, _v[session1Index, r, t]);
-            //        expr.AddTerm(1.0, _v[session2Index, r, t]);
-            //    }
-            //    _model.AddConstr(expr <= 1.0, $"x[{session1Index},*,{t}]_NotEqual_x[{session2Index},*,{t}]");
-            //    Console.WriteLine($"x[{session1Index},*,{t}]_NotEqual_x[{session2Index},*,{t}]");
-            //}
+            for (int t = 0; t < timeslotCount; t++)
+            {
+                Constraint expr = _model.MakeConstraint(0.0, 1.0, $"x[{session1Index},*,{t}]_NotEqual_x[{session2Index},*,{t}]");
+                for (int r = 0; r < roomCount; r++)
+                {
+                    expr.SetCoefficient(_v[session1Index, r, t], 1.0);
+                    expr.SetCoefficient(_v[session2Index, r, t], 1.0);
+                }
+                Console.WriteLine($"x[{session1Index},*,{t}]_NotEqual_x[{session2Index},*,{t}]");
+            }
         }
 
         private static void Validate(IEnumerable<Session> sessions, IEnumerable<Room> rooms, IEnumerable<Timeslot> timeslots)
@@ -259,7 +289,15 @@ namespace ConferenceScheduler.Optimizer.Glop
 
         private static Solver CreateLinearProgrammingSolver()
         {
-            Solver solver = Solver.CreateSolver("LinearProgramming", "GLOP_LINEAR_PROGRAMMING");
+            var solver = new Solver("LinearProgramming", Solver.GLOP_LINEAR_PROGRAMMING);
+            if (solver == null)
+                throw new InvalidOperationException("Could not create solver");
+            return solver;
+        }
+
+        private static Solver CreateMixedIntegerProgrammingSolver()
+        {
+            var solver = new Solver("MIP", Solver.CBC_MIXED_INTEGER_PROGRAMMING);
             if (solver == null)
                 throw new InvalidOperationException("Could not create solver");
             return solver;

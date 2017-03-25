@@ -65,7 +65,7 @@ namespace ConferenceScheduler.Optimizer.Test
         }
 
         [Test]
-        public void SeparatingSessionsInTheSameTrackIntoDifferentTimslots_4Sessions3Tracks()
+        public void SeparatingSessionsInTheSameTrackIntoDifferentTimeslots_4Sessions3Tracks()
         {
             var sessions = new SessionsCollection();
             sessions.Add(1, 1, Presenter.Create(1));
