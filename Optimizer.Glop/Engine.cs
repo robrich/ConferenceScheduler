@@ -97,12 +97,12 @@ namespace ConferenceScheduler.Optimizer.Glop
                         Console.WriteLine($"Variable: x[{s},{r},{t}]");
                     }
 
-            _s = new Variable[sessionCount];
-            for (int s = 0; s < sessionCount; s++)
-            {
-                _s[s] = _model.MakeIntVar(0.0, Convert.ToDouble(timeslotCount), $"s[{s}]");
-                Console.WriteLine($"Variable: s[{s}]");
-            }
+            //_s = new Variable[sessionCount];
+            //for (int s = 0; s < sessionCount; s++)
+            //{
+            //    _s[s] = _model.MakeIntVar(0.0, Convert.ToDouble(timeslotCount), $"s[{s}]");
+            //    Console.WriteLine($"Variable: s[{s}]");
+            //}
         }
 
         private void CreateConstraints(IEnumerable<Session> sessions, IEnumerable<Room> rooms, int timeslotCount)
@@ -208,39 +208,28 @@ namespace ConferenceScheduler.Optimizer.Glop
                 }
             }
 
+            // All sessions with dependencies on a session must be scheduled
+            // later (with a higher timeslot index value) than that session S
+            foreach (var session in sessions)
+            {
+                int sessionIndex = _sessionIds.IndexOfValue(session.Id).Value;
+                foreach (var dependentSession in session.Dependencies)
+                {
+                    int dependentSessionIndex = _sessionIds.IndexOfValue(dependentSession.Id).Value;
+                    LinearExpr dExpr = new LinearExpr();
+                    LinearExpr sExpr = new LinearExpr();
 
-            // The value of s[i] must be equal to the index of the timeslot
-            // that session i is assigned to
-            //for (int i = 0; i < sessionCount; i++)
-            //{
-            //    _model.
-            //    var dict = new Dictionary<Variable, double>();
-            //    for (int t = 0; t < timeslotCount; t++)
-            //        for (int r = 0; r < roomCount; r++)
-            //            dict.Add(_v[i, r, t], t);
+                    for (int r = 0; r < roomCount; r++)
+                        for (int t = 0; t < timeslotCount; t++)
+                        {
+                            dExpr += (_v[dependentSessionIndex, r, t] * (t + 1));
+                            sExpr += (_v[sessionIndex, r, t] * t);
+                        }
 
-            //    // 0.0, timeslotCount, $"s[{i}]_Equals_Timeslot_x[{i},*,*]");
-
-            //    var c = new LinearExpr();
-            //    var r1 = c.Visit(dict);
-            //    var lc = new LinearConstraint();
-
-            //    _model.Add(_s[i] == dict);
-            //    Console.WriteLine($"s[{i}]_Equals_Timeslot");
-            //}
-
-            //// All sessions with dependencies on session S must be scheduled
-            //// later (with a higher index value) than session S
-            //foreach (var session in sessions)
-            //{
-            //    int sessionIndex = _sessionIds.IndexOfValue(session.Id).Value;
-            //    foreach (var dependentSession in session.Dependencies)
-            //    {
-            //        int dependentSessionIndex = _sessionIds.IndexOfValue(dependentSession.Id).Value;
-            //        _model.AddConstr((_s[dependentSessionIndex] + 1) <= _s[sessionIndex], $"s[{dependentSessionIndex}]_GreaterThan_s[{sessionIndex}]");
-            //        Console.WriteLine($"s[{dependentSessionIndex}]_GreaterThan_s[{sessionIndex}]");
-            //    }
-            //}
+                    _model.Add(dExpr <= sExpr);
+                    Console.WriteLine($"s[{sessionIndex}]_GreaterThan_s[{dependentSessionIndex}]");
+                }
+            }
 
         }
 
