@@ -16,7 +16,7 @@ namespace ConferenceScheduler.Optimizer.Glop
 
         Solver _model;
         Variable[,,] _v;
-        Variable[] _s;
+        // Variable[] _s;
 
         int[] _timeslotIds;
         int[] _sessionIds;

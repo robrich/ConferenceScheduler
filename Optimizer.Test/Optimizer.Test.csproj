@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ConferenceScheduler.Optimizer.Test</RootNamespace>
     <AssemblyName>ConferenceScheduler.Optimizer.Test</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -77,10 +78,6 @@
       <Project>{710a33e1-1e6e-4dad-be14-cf2096ae6713}</Project>
       <Name>Optimizer.Glop</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Optimizer.Gurobi\Optimizer.Gurobi.csproj">
-      <Project>{0e2eea41-d3f6-4f27-8a05-6b1394742014}</Project>
-      <Name>Optimizer.Gurobi</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Optimizer\Optimizer.csproj">
       <Project>{f131fa05-4d35-4bb0-b70a-453e2cf0df50}</Project>
       <Name>Optimizer</Name>
@@ -90,6 +87,7 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

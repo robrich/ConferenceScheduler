@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26228.9
+VisualStudioVersion = 15.0.26403.7
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Optimizer", "Optimizer\Optimizer.csproj", "{F131FA05-4D35-4BB0-B70A-453E2CF0DF50}"
 EndProject
@@ -16,8 +16,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConferenceScheduler", "ConferenceScheduler\ConferenceScheduler.csproj", "{FC1B17FD-6629-4DA6-B9BA-E5684D6C056E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Optimizer.InternalsTest", "Optimizer.InternalsTest\Optimizer.InternalsTest.csproj", "{07F01F6C-B907-4184-A481-AD0257DBED4D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Optimizer.Gurobi", "Optimizer.Gurobi\Optimizer.Gurobi.csproj", "{0E2EEA41-D3F6-4F27-8A05-6B1394742014}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Optimizer.Glop", "Optimizer.Glop\Optimizer.Glop.csproj", "{710A33E1-1E6E-4DAD-BE14-CF2096AE6713}"
 EndProject
@@ -61,14 +59,6 @@ Global
 		{07F01F6C-B907-4184-A481-AD0257DBED4D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{07F01F6C-B907-4184-A481-AD0257DBED4D}.Release|x64.ActiveCfg = Release|x64
 		{07F01F6C-B907-4184-A481-AD0257DBED4D}.Release|x64.Build.0 = Release|x64
-		{0E2EEA41-D3F6-4F27-8A05-6B1394742014}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0E2EEA41-D3F6-4F27-8A05-6B1394742014}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0E2EEA41-D3F6-4F27-8A05-6B1394742014}.Debug|x64.ActiveCfg = Debug|x64
-		{0E2EEA41-D3F6-4F27-8A05-6B1394742014}.Debug|x64.Build.0 = Debug|x64
-		{0E2EEA41-D3F6-4F27-8A05-6B1394742014}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0E2EEA41-D3F6-4F27-8A05-6B1394742014}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0E2EEA41-D3F6-4F27-8A05-6B1394742014}.Release|x64.ActiveCfg = Release|x64
-		{0E2EEA41-D3F6-4F27-8A05-6B1394742014}.Release|x64.Build.0 = Release|x64
 		{710A33E1-1E6E-4DAD-BE14-CF2096AE6713}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{710A33E1-1E6E-4DAD-BE14-CF2096AE6713}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{710A33E1-1E6E-4DAD-BE14-CF2096AE6713}.Debug|x64.ActiveCfg = Debug|x64
