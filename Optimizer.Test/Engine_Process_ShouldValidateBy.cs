@@ -66,7 +66,7 @@ namespace ConferenceScheduler.Optimizer.Test
         public void ThrowingArgumentNullExceptionIfRoomsIsNull()
         {
             var sessions = new SessionsCollection();
-            sessions.Add(1, 1);
+            sessions.Add(1, 1, Presenter.Create(1));
 
             IEnumerable<Room> rooms = null;
 
@@ -98,7 +98,7 @@ namespace ConferenceScheduler.Optimizer.Test
         public void ThrowingArgumentNullExceptionIfTimeslotsIsNull()
         {
             var sessions = new SessionsCollection();
-            sessions.Add(1, 1);
+            sessions.Add(1, 1, Presenter.Create(1));
 
             var rooms = new List<Room>();
             rooms.Add(Room.Create(1, 10));
