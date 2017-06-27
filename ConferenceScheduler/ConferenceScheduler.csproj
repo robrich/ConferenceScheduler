@@ -73,6 +73,7 @@
     <Compile Include="Exceptions\DependencyException.cs" />
     <Compile Include="Exceptions\NoFeasibleSolutionsException.cs" />
     <Compile Include="Extensions\IntegerExtensions.cs" />
+    <Compile Include="Extensions\SessionsExtensions.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Interfaces\IConferenceOptimizer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

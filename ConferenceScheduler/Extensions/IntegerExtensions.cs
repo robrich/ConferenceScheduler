@@ -12,6 +12,36 @@ namespace ConferenceScheduler.Extensions
     /// </summary>
     public static class IntegerExtensions
     {
+        // TODO: Document
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "target")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "source")]
+        public static bool Matches(this IEnumerable<int> source, IEnumerable<int> target)
+        {
+            bool result = source.Count().Equals(target.Count());
+            if (result)
+            {
+                var sourceArray = source.ToArray();
+                var targetArray = target.ToArray();
+                for (int i = 0; i < sourceArray.Length; i++)
+                {
+                    if (sourceArray[i] != targetArray[i])
+                    {
+                        result = false;
+                        break;
+                    }
+                }
+            }
+
+            return result;
+        }
+
+
         /// <summary>
         /// Locates the item in an array that holds the specified value
         /// </summary>

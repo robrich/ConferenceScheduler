@@ -111,7 +111,7 @@ namespace ConferenceScheduler.Optimizer.Test
         }
 
         [Test]
-        public void ThrowingNoFeasibleSolutionIfThereAreMoreSessionsThanSlotsAndRooms()
+        public void ThrowingArgumentExceptionIfThereAreMoreSessionsThanSlotsAndRooms()
         {
             var engine = (null as IConferenceOptimizer).Create();
 
@@ -125,7 +125,29 @@ namespace ConferenceScheduler.Optimizer.Test
             var timeslots = new List<Timeslot>();
             timeslots.Add(Timeslot.Create(1));
 
-            Assert.Throws<Exceptions.NoFeasibleSolutionsException>(() => engine.Process(sessions, rooms, timeslots));
+            Assert.Throws<ArgumentException>(() => engine.Process(sessions, rooms, timeslots));
+        }
+
+        [Test]
+        public void ThrowingArgumentExceptionIfThereAreMoreSessionsThanRoomSlotCombinations()
+        {
+            var engine = (null as IConferenceOptimizer).Create();
+
+            var sessions = new SessionsCollection();
+            sessions.Add(1, null, Presenter.Create(1));
+            sessions.Add(2, null, Presenter.Create(2));
+            sessions.Add(3, null, Presenter.Create(3));
+            sessions.Add(4, null, Presenter.Create(4));
+
+            var rooms = new List<Room>();
+            rooms.Add(Room.Create(1, 10));
+            rooms.Add(Room.Create(2, 10, 2)); // Room is not available in timeslot 2
+
+            var timeslots = new List<Timeslot>();
+            timeslots.Add(Timeslot.Create(1));
+            timeslots.Add(Timeslot.Create(2));
+
+            Assert.Throws<ArgumentException>(() => engine.Process(sessions, rooms, timeslots));
         }
 
         [Test]
@@ -197,6 +219,132 @@ namespace ConferenceScheduler.Optimizer.Test
             var engine = (null as IConferenceOptimizer).Create();
 
             Assert.Throws<Exceptions.DependencyException>(() => engine.Process(sessions, rooms, timeslots));
+        }
+
+
+        [Test]
+        public void ThrowingArgumentExceptionIfDuplicateSessionIdsExist()
+        {
+            var sessions = new SessionsCollection();
+
+            var session1 = sessions.Add(1, 1, Presenter.Create(1));
+            var session2 = sessions.Add(2, 1, Presenter.Create(2));
+            var session3 = sessions.Add(1, 1, Presenter.Create(3));
+
+            var rooms = new List<Room>();
+            rooms.Add(Room.Create(1, 10));
+            rooms.Add(Room.Create(2, 10));
+
+            var timeslots = new List<Timeslot>();
+            timeslots.Add(Timeslot.Create(1));
+            timeslots.Add(Timeslot.Create(2));
+
+            var engine = (null as IConferenceOptimizer).Create();
+
+            Assert.Throws<ArgumentException>(() => engine.Process(sessions, rooms, timeslots));
+
+        }
+
+        [Test]
+        public void ThrowingArgumentExceptionIfDuplicateRoomIdsExist()
+        {
+            var sessions = new SessionsCollection();
+
+            var session1 = sessions.Add(1, 1, Presenter.Create(1));
+            var session2 = sessions.Add(2, 1, Presenter.Create(2));
+            var session3 = sessions.Add(3, 1, Presenter.Create(3));
+
+            var rooms = new List<Room>();
+            rooms.Add(Room.Create(1, 10));
+            rooms.Add(Room.Create(2, 10));
+            rooms.Add(Room.Create(1, 10));
+
+            var timeslots = new List<Timeslot>();
+            timeslots.Add(Timeslot.Create(1));
+            timeslots.Add(Timeslot.Create(2));
+
+            var engine = (null as IConferenceOptimizer).Create();
+
+            Assert.Throws<ArgumentException>(() => engine.Process(sessions, rooms, timeslots));
+        }
+
+        [Test]
+        public void ThrowingArgumentExceptionIfDuplicateTimeslotIdsExist()
+        {
+            var sessions = new SessionsCollection();
+
+            var session1 = sessions.Add(1, 1, Presenter.Create(1));
+            var session2 = sessions.Add(2, 1, Presenter.Create(2));
+            var session3 = sessions.Add(3, 1, Presenter.Create(3));
+
+            var rooms = new List<Room>();
+            rooms.Add(Room.Create(1, 10));
+            rooms.Add(Room.Create(2, 10));
+
+            var timeslots = new List<Timeslot>();
+            timeslots.Add(Timeslot.Create(1));
+            timeslots.Add(Timeslot.Create(2));
+            timeslots.Add(Timeslot.Create(1));
+
+            var engine = (null as IConferenceOptimizer).Create();
+
+            Assert.Throws<ArgumentException>(() => engine.Process(sessions, rooms, timeslots));
+        }
+
+        [Test]
+        public void ThrowingArgumentExceptionIfDuplicatePresenterIdsWithDifferentAvailabilitiesExist()
+        {
+
+            var presenter1 = Presenter.Create(1, 2, 3);
+            var presenter2 = Presenter.Create(2, 2);
+            var presenter3 = Presenter.Create(1, 1, 2);
+
+            var sessions = new SessionsCollection();
+
+            var session1 = sessions.Add(1, 1, presenter1);
+            var session2 = sessions.Add(2, 1, presenter2);
+            var session3 = sessions.Add(3, 1, presenter3);
+
+            var rooms = new List<Room>();
+            rooms.Add(Room.Create(1, 10));
+            rooms.Add(Room.Create(2, 10));
+            rooms.Add(Room.Create(3, 10));
+
+            var timeslots = new List<Timeslot>();
+            timeslots.Add(Timeslot.Create(1));
+            timeslots.Add(Timeslot.Create(2));
+
+            var engine = (null as IConferenceOptimizer).Create();
+
+            Assert.Throws<ArgumentException>(() => engine.Process(sessions, rooms, timeslots));
+
+        }
+
+        [Test]
+        public void ThrowingArgumentExceptionIfDuplicatePresenterIdsWithDifferentAvailabilityCountsExist()
+        {
+
+            var presenter1 = Presenter.Create(1, 2);
+            var presenter2 = Presenter.Create(2, 2);
+            var presenter3 = Presenter.Create(1);
+
+            var sessions = new SessionsCollection();
+
+            var session1 = sessions.Add(1, 1, presenter1);
+            var session2 = sessions.Add(2, 1, presenter2);
+            var session3 = sessions.Add(3, 1, presenter3);
+
+            var rooms = new List<Room>();
+            rooms.Add(Room.Create(1, 10));
+            rooms.Add(Room.Create(2, 10));
+
+            var timeslots = new List<Timeslot>();
+            timeslots.Add(Timeslot.Create(1));
+            timeslots.Add(Timeslot.Create(2));
+
+            var engine = (null as IConferenceOptimizer).Create();
+
+            Assert.Throws<ArgumentException>(() => engine.Process(sessions, rooms, timeslots));
 
         }
     }

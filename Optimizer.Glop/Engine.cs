@@ -267,12 +267,44 @@ namespace ConferenceScheduler.Optimizer.Glop
             if (rooms.Count() == 0)
                 throw new ArgumentException("You must have at least one room");
 
+            if (sessions.Select(s => s.Id).Distinct().Count() != sessions.Count())
+                throw new ArgumentException("Session Ids must be unique");
+
+            if (rooms.Select(r => r.Id).Distinct().Count() != rooms.Count())
+                throw new ArgumentException("Room Ids must be unique");
+
+            if (timeslots.Select(t => t.Id).Distinct().Count() != timeslots.Count())
+                throw new ArgumentException("Timeslot Ids must be unique");
+
             if (sessions.Count(s => s.Presenters == null || s.Presenters.Count() < 1) > 0)
                 throw new ArgumentException("Every session must have at least one presenter.");
+
+            var presenters = sessions.SelectMany(s => s.Presenters);
+            var presenterIds = presenters.Select(p => p.Id).Distinct();
+
+            foreach (var presenterId in presenterIds)
+            {
+                if (presenters.Count(p => p.Id == presenterId) > 1)
+                {
+                    var baseAvailability = presenters.First().UnavailableForTimeslots;
+                    foreach (var presenter in presenters.Where(p => p.Id == presenterId))
+                    {
+                        if (!presenter.UnavailableForTimeslots.Matches(baseAvailability))
+                            throw new ArgumentException("A presenters availability must be consistant across all instances");
+                    }
+                }
+            }
+
+
+            var roomSlotCombinations = (rooms.Count() * timeslots.Count()) - rooms.Sum(r => r.UnavailableForTimeslots.Count());
+            if (roomSlotCombinations < sessions.Count())
+                throw new ArgumentException($"You must have at least as many room-timeslot combinations ({roomSlotCombinations}) as you have sessions ({sessions.Count()}).");
 
             var presentations = new SessionsCollection(sessions);
             if (presentations.HaveCircularDependencies())
                 throw new DependencyException("Sessions may not have circular dependencies.");
+
+
         }
 
 
