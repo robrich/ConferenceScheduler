@@ -38,7 +38,7 @@ namespace ConferenceScheduler.Optimizer.Test
                 result.Append("{0}\t", timeslot);
 
             result.AppendLine();
-            result.AppendLine("---------------------------------------------------------------------------");
+            result.AppendLine("----------------------------------------------------------------------------------------------");
 
             foreach (var room in rooms)
             {

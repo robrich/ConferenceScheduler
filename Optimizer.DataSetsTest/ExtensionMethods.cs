@@ -56,7 +56,7 @@ namespace Optimizer.DataSetsTest
                             else
                             {
                                 var fullName = names.Single(n => n.Key == session.SessionId).Value;
-                                name = $"{fullName.Substring(0, Math.Min(fullName.Length, 10)).PadRight(10)} ({session.SessionId:2})";
+                                name = $"{fullName.Substring(0, Math.Min(fullName.Length, 10)).PadRight(10)} ({session.SessionId:00})";
                             }
                             result.Append($"{name}\t");
                         }

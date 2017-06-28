@@ -208,6 +208,26 @@ namespace ConferenceScheduler.Optimizer.Glop
                 }
             }
 
+            // A timeslot should have no more sessions than absolutely necessary.
+            // This serves to distribute the sessions around so we don't end up with 
+            // one empty (or nearly empty) timeslot
+            // NOTE: Because this is a hard constraint, it is possible that it could cause
+            // problems when there are a lot of dependencies. 
+            // TODO: Make an objective rather than a constraint
+            double maxSessionCount = System.Math.Ceiling(Convert.ToDouble(sessions.Count()) / Convert.ToDouble(timeslotCount));
+            for (int t = 0; t < timeslotCount; t++)
+            {
+                var expr = _model.MakeConstraint(0.0, maxSessionCount, $"x[*,*,{t}]_LessEqual_{maxSessionCount}");
+                foreach (var session in sessions)
+                {
+                    int sessionIndex = _sessionIds.IndexOfValue(session.Id).Value;
+                    for (int r = 0; r < roomCount; r++)
+                        expr.SetCoefficient(_v[sessionIndex, r, t], 1.0);
+                }
+                Console.WriteLine($"x[*,*,{t}]_LessEqual_{maxSessionCount}");
+            }
+
+
             // All sessions with dependencies on a session must be scheduled
             // later (with a higher timeslot index value) than that session S
             foreach (var session in sessions)
