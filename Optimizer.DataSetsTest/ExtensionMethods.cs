@@ -21,7 +21,7 @@ namespace Optimizer.DataSetsTest
             return new ConferenceScheduler.Optimizer.Glop.Engine(eventHandlers.EngineUpdateEventHandler);
         }
 
-        public static void WriteSchedule(this IEnumerable<Assignment> assignments)
+        public static void WriteSchedule(this IEnumerable<Assignment> assignments, IDictionary<int, string> names = null)
         {
             var timeslots = assignments.Select(a => a.TimeslotId).Distinct().OrderBy(a => a);
             var rooms = assignments.Select(a => a.RoomId).Distinct().OrderBy(a => a);
@@ -31,7 +31,7 @@ namespace Optimizer.DataSetsTest
             result.Append("R\\T\t|\t");
 
             foreach (var timeslot in timeslots)
-                result.Append($"{timeslot}\t");
+                result.Append($"{timeslot.ToString().PadRight(15, ' ')}\t");
 
             result.AppendLine();
             result.AppendLine("---------------------------------------------------------------------------");
@@ -47,9 +47,19 @@ namespace Optimizer.DataSetsTest
                     {
                         var session = assignments.Where(a => a.RoomId == room && a.TimeslotId == timeslot).SingleOrDefault();
                         if (session == null)
-                            result.Append("\t");
+                            result.Append("\t".PadLeft(15, ' '));
                         else
-                            result.Append($"{session.SessionId}\t");
+                        {
+                            string name;
+                            if (names == null)
+                                name = session.SessionId.ToString().PadRight(15);
+                            else
+                            {
+                                var fullName = names.Single(n => n.Key == session.SessionId).Value;
+                                name = $"{fullName.Substring(0, Math.Min(fullName.Length, 10)).PadRight(10)} ({session.SessionId:2})";
+                            }
+                            result.Append($"{name}\t");
+                        }
                     }
                 }
                 result.AppendLine();

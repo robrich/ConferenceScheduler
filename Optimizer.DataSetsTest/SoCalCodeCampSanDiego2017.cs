@@ -172,7 +172,52 @@ namespace Optimizer.DataSetsTest
 
             // Create the schedule
             var assignments = engine.Process(sessions, rooms, timeslots);
-            assignments.WriteSchedule();
+
+            // Name the sessions for output
+            var sn = new Dictionary<int, string>();
+            sn.Add(session01.Id, "Pay it Forward Through Foster Care");
+            sn.Add(session02.Id, "Intro to AWS IOT Device Shadow");
+            sn.Add(session03.Id, "Zen of Python: Readability");
+            sn.Add(session04.Id, "Comprehensible Comprehensions");
+            sn.Add(session05.Id, "Digital Speech Within 125Hz Bandwidth");
+            sn.Add(session06.Id, "PM Menu:Digging in");
+            sn.Add(session07.Id, "Bots:New Enterprise Apps");
+            sn.Add(session08.Id, "Flutter:Getting Started");
+            sn.Add(session09.Id, "Mob Prog & Lofty Goals");
+            sn.Add(session10.Id, "Azure IOT Edge 101");
+            sn.Add(session11.Id, "Azure Fucs w/ Azure Storage");
+            sn.Add(session12.Id, "Everyone is Public Speaker");
+            sn.Add(session13.Id, "Hashcash:Alg of Bitcoin");
+            sn.Add(session14.Id, "Timey-Wimey Stuff");
+            sn.Add(session15.Id, "Angular NGX for Beginners");
+            sn.Add(session16.Id, "Building Android Apps in AWS");
+            sn.Add(session17.Id, "Native Ionic Dev");
+            sn.Add(session18.Id, "DI in JavaScript");
+            sn.Add(session19.Id, "Mobile Dev for .Net Devs");
+            sn.Add(session20.Id, "Simple Back-end APIs");
+            sn.Add(session21.Id, "Kotlin:Introduction");
+            sn.Add(session22.Id, "Power BI Dashboardsx");
+            sn.Add(session23.Id, "JS Like a Kung-Fu Student");
+            sn.Add(session24.Id, "Bitcoin 101");
+            sn.Add(session25.Id, "Blockchain 101");
+            sn.Add(session26.Id, "Rapid REST Dev w/Node & Sails");
+            sn.Add(session27.Id, "Native Mobile Dev With TACO");
+            sn.Add(session28.Id, "Redux:Introduction");
+            sn.Add(session29.Id, "React:Getting Started");
+            sn.Add(session30.Id, "Devs Survey of AI");
+            sn.Add(session31.Id, "ML:Intro to Image & Text Analysis");
+            sn.Add(session32.Id, "ChatBots:Intro using Node");
+            sn.Add(session33.Id, "Accidental DevOps:CI for .NET");
+            sn.Add(session34.Id, "What is Ionic");
+            sn.Add(session35.Id, "IOT Lab 1");
+            sn.Add(session36.Id, "IOT Lab 2");
+            sn.Add(session37.Id, "IOT Lab 3");
+            sn.Add(session38.Id, "IOT Lab 4");
+            sn.Add(session39.Id, "IOT Lab 5");
+            sn.Add(session40.Id, "IOT Lab 6");
+
+            // Display the results
+            assignments.WriteSchedule(sn);
 
         }
     }
