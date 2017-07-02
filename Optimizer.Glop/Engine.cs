@@ -285,15 +285,18 @@ namespace ConferenceScheduler.Optimizer.Glop
             //        }
             //    }
 
-            //// Variable Z[s] should hold the room # of the session
-            //foreach (var session in sessions)
-            //{
-            //    int sessionIndex = _sessionIds.IndexOfValue(session.Id).Value;
-            //    Console.WriteLine($"z[{sessionIndex}]=RoomIndex");
-            //    for (int t = 0; t < timeslotCount; t++)
-            //        for (int r = 0; r < roomCount; r++)
-            //            _model.Add(_r[sessionIndex] == (_v[sessionIndex, r, t] * r));
-            //}
+            // Variable R[s] should hold the room # of the session
+            foreach (var session in sessions)
+            {
+                int sessionIndex = _sessionIds.IndexOfValue(session.Id).Value;
+                Console.WriteLine($"z[{sessionIndex}]=RoomIndex");
+                var expr = new LinearExpr();
+                for (int t = 0; t < timeslotCount; t++)
+                    for (int r = 0; r < roomCount; r++)
+                        expr += _v[sessionIndex, r, t] * r;
+
+                _model.Add(_r[sessionIndex] == expr);
+            }
 
             //// A topicId should be spread-out across no more rooms than absolutely necessary.
             //var topicIds = sessions.Where(s => s.TopicId.HasValue).Select(s => s.TopicId.Value).Distinct();
