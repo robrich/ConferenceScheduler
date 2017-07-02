@@ -289,7 +289,7 @@ namespace ConferenceScheduler.Optimizer.Glop
             foreach (var session in sessions)
             {
                 int sessionIndex = _sessionIds.IndexOfValue(session.Id).Value;
-                Console.WriteLine($"z[{sessionIndex}]=RoomIndex");
+                Console.WriteLine($"r[{sessionIndex}]=RoomIndex");
                 var expr = new LinearExpr();
                 for (int t = 0; t < timeslotCount; t++)
                     for (int r = 0; r < roomCount; r++)
