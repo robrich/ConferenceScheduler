@@ -71,9 +71,9 @@ namespace ConferenceScheduler.Optimizer.Test
             var s2RoomId = assignments.Where(a => a.SessionId == 2).Single().RoomId;
             var s5RoomId = assignments.Where(a => a.SessionId == 5).Single().RoomId;
 
-            Assert.That(s1RoomId, Is.EqualTo(s3RoomId), "Sessions with the same TopicId should be in the same room whenever possible.");
-            Assert.That(s1RoomId, Is.EqualTo(s4RoomId), "Sessions with the same TopicId should be in the same room whenever possible.");
-            Assert.That(s2RoomId, Is.EqualTo(s5RoomId), "Sessions with the same TopicId should be in the same room whenever possible.");
+            Assert.That(s1RoomId, Is.EqualTo(s3RoomId), "Sessions with the same TopicId should be in the same room whenever possible (S1 & S3).");
+            Assert.That(s1RoomId, Is.EqualTo(s4RoomId), "Sessions with the same TopicId should be in the same room whenever possible (S1 & S4).");
+            Assert.That(s2RoomId, Is.EqualTo(s5RoomId), "Sessions with the same TopicId should be in the same room whenever possible (S2 & S5).");
         }
 
         //[Test]

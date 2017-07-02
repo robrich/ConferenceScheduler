@@ -9,7 +9,6 @@ namespace Optimizer.DataSetsTest
 {
     public enum Topic
     {
-        Other = 0,
         SoftSkills = 1,
         IOT = 2,
         Python = 3,
@@ -77,7 +76,7 @@ namespace Optimizer.DataSetsTest
             var session03 = sessions.Add(3, (int)Topic.Python, presenterTreyHunner);
             var session04 = sessions.Add(4, (int)Topic.Python, presenterTreyHunner);
 
-            var session05 = sessions.Add(5, (int)Topic.Other, presenterMichaelLebo);
+            var session05 = sessions.Add(5, null, presenterMichaelLebo);
 
             var session06 = sessions.Add(6, (int)Topic.Agile, presenterAaronRuckman);
 
@@ -95,7 +94,7 @@ namespace Optimizer.DataSetsTest
 
             var session13 = sessions.Add(13, (int)Topic.Blockchain, presenterTobiasHughes);
 
-            var session14 = sessions.Add(14, (int)Topic.Other, presenterWendySteinman);
+            var session14 = sessions.Add(14, null, presenterWendySteinman);
 
             var session15 = sessions.Add(15, (int)Topic.Angular, presenterOgunTigli);
 
@@ -186,7 +185,7 @@ namespace Optimizer.DataSetsTest
             sn.Add(session08.Id, "Flutter:Getting Started");
             sn.Add(session09.Id, "Mob Prog & Lofty Goals");
             sn.Add(session10.Id, "Azure IOT Edge 101");
-            sn.Add(session11.Id, "Azure Fucs w/ Azure Storage");
+            sn.Add(session11.Id, "Azure Funcs w/ Azure Storage");
             sn.Add(session12.Id, "Everyone is Public Speaker");
             sn.Add(session13.Id, "Hashcash:Alg of Bitcoin");
             sn.Add(session14.Id, "Timey-Wimey Stuff");

@@ -298,31 +298,31 @@ namespace ConferenceScheduler.Optimizer.Glop
                 _model.Add(_r[sessionIndex] == expr);
             }
 
-            //// A topicId should be spread-out across no more rooms than absolutely necessary.
-            //var topicIds = sessions.Where(s => s.TopicId.HasValue).Select(s => s.TopicId.Value).Distinct();
-            //foreach (var topicId in topicIds)
-            //{
-            //    double topicCount = sessions.Count(s => s.TopicId == topicId);
-            //    if (topicCount > roomCount)
-            //        Console.WriteLine($"Topic {topicId} has {topicCount} sessions which is more than the {roomCount} rooms.  This topic will not be included in a track");
-            //    else if (topicCount == 1)
-            //        Console.WriteLine($"Topic {topicId} has only 1 session.  This topic will not be included in a track");
-            //    else
-            //    {
-            //        var sessionsInTopic = sessions.Where(s => s.TopicId.HasValue && s.TopicId == topicId);
-            //        foreach (var session in sessionsInTopic)
-            //        {
-            //            int sessionIndex = _sessionIds.IndexOfValue(session.Id).Value;
-            //            var otherSessionsInTopic = sessions.Where(s => s.TopicId.HasValue && s.TopicId == topicId && s.Id != session.Id);
-            //            foreach (var otherSession in otherSessionsInTopic)
-            //            {
-            //                int otherSessionIndex = _sessionIds.IndexOfValue(otherSession.Id).Value;
-            //                _model.Add(_r[sessionIndex] == _r[otherSessionIndex]);
-            //                Console.WriteLine($"z[{sessionIndex}]_Equal_z[{otherSessionIndex}]");
-            //            }
-            //        }
-            //    }
-            //}
+            // A topicId should be spread-out across no more rooms than absolutely necessary.
+            topicIds = sessions.Where(s => s.TopicId.HasValue).Select(s => s.TopicId.Value).Distinct();
+            foreach (var topicId in topicIds)
+            {
+                double topicCount = sessions.Count(s => s.TopicId == topicId);
+                if (topicCount > timeslotCount)
+                    Console.WriteLine($"Topic {topicId} has {topicCount} sessions which is more than the {timeslotCount} timeslots.  This topic will not be included in a track");
+                else if (topicCount == 1)
+                    Console.WriteLine($"Topic {topicId} has only 1 session.  This topic will not be included in a track");
+                else
+                {
+                    var sessionsInTopic = sessions.Where(s => s.TopicId.HasValue && s.TopicId == topicId);
+                    foreach (var session in sessionsInTopic)
+                    {
+                        int sessionIndex = _sessionIds.IndexOfValue(session.Id).Value;
+                        var otherSessionsInTopic = sessions.Where(s => s.TopicId.HasValue && s.TopicId == topicId && s.Id != session.Id);
+                        foreach (var otherSession in otherSessionsInTopic)
+                        {
+                            int otherSessionIndex = _sessionIds.IndexOfValue(otherSession.Id).Value;
+                            _model.Add(_r[sessionIndex] == _r[otherSessionIndex]);
+                            Console.WriteLine($"z[{sessionIndex}]_Equal_z[{otherSessionIndex}]");
+                        }
+                    }
+                }
+            }
 
         }
 
