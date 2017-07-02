@@ -15,7 +15,9 @@ namespace ConferenceScheduler.Optimizer.Glop
         Action<ProcessUpdateEventArgs> _updateEventHandler;
 
         Solver _model;
-        Variable[,,] _v;
+        Variable[,,] _v; // holds a boolean indicator for each room/timeslot/session combination.
+        Variable[] _r; // holds the room number of the session
+        // Variable[,] _t; // holds the topicId of each room/timeslot combination
         // Variable[] _s;
 
         int[] _timeslotIds;
@@ -30,7 +32,6 @@ namespace ConferenceScheduler.Optimizer.Glop
         {
             _updateEventHandler = updateEventHandler;
             _model = CreateMixedIntegerProgrammingSolver();
-            // _model = CreateLinearProgrammingSolver();
         }
 
         public IEnumerable<Assignment> Process(IEnumerable<Session> sessions, IEnumerable<Room> rooms, IEnumerable<Timeslot> timeslots)
@@ -74,6 +75,9 @@ namespace ConferenceScheduler.Optimizer.Glop
             //for (int i = 0; i < sessions.Count(); i++)
             //    Console.WriteLine($"s[{i}] = {p[i]}");
 
+            var roomValues = new int[sessions.Count()];
+            var rv = _r.Select(r => r.SolutionValue()).ToArray();
+
             var results = new List<Assignment>();
             for (int s = 0; s < sessions.Count(); s++)
                 for (int r = 0; r < rooms.Count(); r++)
@@ -96,6 +100,22 @@ namespace ConferenceScheduler.Optimizer.Glop
                         _v[s, r, t] = _model.MakeBoolVar($"x[{s},{r},{t}]");
                         Console.WriteLine($"Variable: x[{s},{r},{t}]");
                     }
+
+            //_t = new Variable[roomCount, timeslotCount];
+            //for (int r = 0; r < roomCount; r++)
+            //    for (int t = 0; t < timeslotCount; t++)
+            //    {
+            //        _t[r, t] = _model.MakeIntVar(0, 999, $"y[{r},{t}]");
+            //        Console.WriteLine($"Variable: y[{r},{t}]");
+            //    }
+
+            _r = new Variable[sessionCount];
+            for (int s = 0; s < sessionCount; s++)
+            {
+                _r[s] = _model.MakeIntVar(0, roomCount, $"z[{s}]");
+                Console.WriteLine($"Variable: z[{s}]");
+            }
+
 
             //_s = new Variable[sessionCount];
             //for (int s = 0; s < sessionCount; s++)
@@ -247,9 +267,59 @@ namespace ConferenceScheduler.Optimizer.Glop
                         }
 
                     _model.Add(dExpr <= sExpr);
-                    Console.WriteLine($"s[{sessionIndex}]_GreaterThan_s[{dependentSessionIndex}]");
+                    Console.WriteLine($"s[{sessionIndex},*,*]_GreaterThan_s[{dependentSessionIndex},*,*]");
                 }
             }
+
+
+            //// Variable Y[r,t] should hold the topic id of the session scheduled in the room during that timeslot
+            //for (int r = 0; r < roomCount; r++)
+            //    for (int t = 0; t < timeslotCount; t++)
+            //    {
+            //        var expr = _model.MakeConstraint(0.0, 999, $"y[{r},{t}]=TopicId");
+            //        Console.WriteLine($"y[{r},{t}]=TopicId");
+            //        foreach (var session in sessions.Where(s => s.TopicId.HasValue))
+            //        {
+            //            int sessionIndex = _sessionIds.IndexOfValue(session.Id).Value;
+            //            expr.SetCoefficient(_v[sessionIndex, r, t], session.TopicId.Value);
+            //        }
+            //    }
+
+            //// Variable Z[s] should hold the room # of the session
+            //foreach (var session in sessions)
+            //{
+            //    int sessionIndex = _sessionIds.IndexOfValue(session.Id).Value;
+            //    Console.WriteLine($"z[{sessionIndex}]=RoomIndex");
+            //    for (int t = 0; t < timeslotCount; t++)
+            //        for (int r = 0; r < roomCount; r++)
+            //            _model.Add(_r[sessionIndex] == (_v[sessionIndex, r, t] * r));
+            //}
+
+            //// A topicId should be spread-out across no more rooms than absolutely necessary.
+            //var topicIds = sessions.Where(s => s.TopicId.HasValue).Select(s => s.TopicId.Value).Distinct();
+            //foreach (var topicId in topicIds)
+            //{
+            //    double topicCount = sessions.Count(s => s.TopicId == topicId);
+            //    if (topicCount > roomCount)
+            //        Console.WriteLine($"Topic {topicId} has {topicCount} sessions which is more than the {roomCount} rooms.  This topic will not be included in a track");
+            //    else if (topicCount == 1)
+            //        Console.WriteLine($"Topic {topicId} has only 1 session.  This topic will not be included in a track");
+            //    else
+            //    {
+            //        var sessionsInTopic = sessions.Where(s => s.TopicId.HasValue && s.TopicId == topicId);
+            //        foreach (var session in sessionsInTopic)
+            //        {
+            //            int sessionIndex = _sessionIds.IndexOfValue(session.Id).Value;
+            //            var otherSessionsInTopic = sessions.Where(s => s.TopicId.HasValue && s.TopicId == topicId && s.Id != session.Id);
+            //            foreach (var otherSession in otherSessionsInTopic)
+            //            {
+            //                int otherSessionIndex = _sessionIds.IndexOfValue(otherSession.Id).Value;
+            //                _model.Add(_r[sessionIndex] == _r[otherSessionIndex]);
+            //                Console.WriteLine($"z[{sessionIndex}]_Equal_z[{otherSessionIndex}]");
+            //            }
+            //        }
+            //    }
+            //}
 
         }
 
@@ -277,14 +347,6 @@ namespace ConferenceScheduler.Optimizer.Glop
         }
 
 
-        private static Solver CreateLinearProgrammingSolver()
-        {
-            var solver = new Solver("LinearProgramming", Solver.GLOP_LINEAR_PROGRAMMING);
-            if (solver == null)
-                throw new InvalidOperationException("Could not create solver");
-            return solver;
-        }
-
         private static Solver CreateMixedIntegerProgrammingSolver()
         {
             var solver = new Solver("MIP", Solver.CBC_MIXED_INTEGER_PROGRAMMING);
@@ -292,6 +354,7 @@ namespace ConferenceScheduler.Optimizer.Glop
                 throw new InvalidOperationException("Could not create solver");
             return solver;
         }
+
 
     }
 }

@@ -100,19 +100,22 @@ namespace ConferenceScheduler.Optimizer.Test
         [Test]
         public void ThrowingNoFeasibleSolutionIfSpeakerWouldHaveToBeInTwoPlacesAtOnce3SessionsFor1SpeakerWith2Timeslots()
         {
+            var speaker1 = Presenter.Create(1);
+            var speaker2 = Presenter.Create(2);
+
             var sessions = new SessionsCollection();
-            sessions.Add(1, null, Presenter.Create(1));
-            sessions.Add(2, null, Presenter.Create(1));
-            sessions.Add(3, null, Presenter.Create(2));
-            sessions.Add(4, null, Presenter.Create(1));
+            sessions.Add(1, null, speaker1);
+            sessions.Add(2, null, speaker1);
+            sessions.Add(3, null, speaker2);
+            sessions.Add(4, null, speaker1);
 
             var rooms = new List<Room>();
             rooms.Add(Room.Create(1, 10));
             rooms.Add(Room.Create(2, 10));
 
             var timeslots = new List<Timeslot>();
-            timeslots.Add(new Timeslot() { Id = 1 });
-            timeslots.Add(new Timeslot() { Id = 2 });
+            timeslots.Add(Timeslot.Create(1));
+            timeslots.Add(Timeslot.Create(2));
 
             var engine = (null as IConferenceOptimizer).Create();
 

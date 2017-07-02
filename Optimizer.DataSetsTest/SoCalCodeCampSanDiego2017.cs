@@ -23,7 +23,8 @@ namespace Optimizer.DataSetsTest
         Javascript = 11,
         DotNetCore = 12,
         BI = 13,
-        ReactRedux = 14
+        ReactRedux = 14,
+        IOTLab = 15
     }
 
     [TestFixture]
@@ -132,12 +133,12 @@ namespace Optimizer.DataSetsTest
 
             var session34 = sessions.Add(34, (int)Topic.Mobile, presenterChrisGriffith);
 
-            var session35 = sessions.Add(35, (int)Topic.IOT, presenterIotLaboratory);
-            var session36 = sessions.Add(36, (int)Topic.IOT, presenterIotLaboratory);
-            var session37 = sessions.Add(37, (int)Topic.IOT, presenterIotLaboratory);
-            var session38 = sessions.Add(38, (int)Topic.IOT, presenterIotLaboratory);
-            var session39 = sessions.Add(39, (int)Topic.IOT, presenterIotLaboratory);
-            var session40 = sessions.Add(40, (int)Topic.IOT, presenterIotLaboratory);
+            var session35 = sessions.Add(35, (int)Topic.IOTLab, presenterIotLaboratory);
+            var session36 = sessions.Add(36, (int)Topic.IOTLab, presenterIotLaboratory);
+            var session37 = sessions.Add(37, (int)Topic.IOTLab, presenterIotLaboratory);
+            var session38 = sessions.Add(38, (int)Topic.IOTLab, presenterIotLaboratory);
+            var session39 = sessions.Add(39, (int)Topic.IOTLab, presenterIotLaboratory);
+            var session40 = sessions.Add(40, (int)Topic.IOTLab, presenterIotLaboratory);
 
 
             // Session dependencies
@@ -217,7 +218,7 @@ namespace Optimizer.DataSetsTest
             sn.Add(session40.Id, "IOT Lab 6");
 
             // Display the results
-            assignments.WriteSchedule(sn);
+            assignments.WriteSchedule(sessions, sn);
 
         }
     }

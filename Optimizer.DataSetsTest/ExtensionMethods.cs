@@ -21,7 +21,12 @@ namespace Optimizer.DataSetsTest
             return new ConferenceScheduler.Optimizer.Glop.Engine(eventHandlers.EngineUpdateEventHandler);
         }
 
-        public static void WriteSchedule(this IEnumerable<Assignment> assignments, IDictionary<int, string> names = null)
+        public static void WriteSchedule(this IEnumerable<Assignment> assignments)
+        {
+
+        }
+
+        public static void WriteSchedule(this IEnumerable<Assignment> assignments, IEnumerable<Session> sessions, IDictionary<int, string> names)
         {
             var timeslots = assignments.Select(a => a.TimeslotId).Distinct().OrderBy(a => a);
             var rooms = assignments.Select(a => a.RoomId).Distinct().OrderBy(a => a);
@@ -56,7 +61,8 @@ namespace Optimizer.DataSetsTest
                             else
                             {
                                 var fullName = names.Single(n => n.Key == session.SessionId).Value;
-                                name = $"{fullName.Substring(0, Math.Min(fullName.Length, 10)).PadRight(10)} ({session.SessionId:00})";
+                                var currentSession = sessions?.Single(s => s.Id == session.SessionId);
+                                name = $"{fullName.Substring(0, Math.Min(fullName.Length, 10)).PadRight(10)} ({ (currentSession == null ? session.SessionId.Value : currentSession.TopicId)})";
                             }
                             result.Append($"{name}\t");
                         }
